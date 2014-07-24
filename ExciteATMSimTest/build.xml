@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create-jar" name="Create Runnable Jar for Project ExciteATMSimTest with libraries in sub-folder">
+
+    <!--ANT 1.7 is required        -->
+	 <property name="src" location="./source/main/java"/>
+	 <property name="build" location="./build"/>
+	 <property name="dist"  location="./dist"/>
+	<property name="lib"  location="./lib"/>
+	
+	 <target name="clean"
+	        description="clean up" >
+	    <!-- Delete the ${dist} and ${dist} directory trees -->
+	    <delete dir="${build}"/>
+	    <delete dir="${dist}"/>
+	  </target>
+	
+	  <target name="init" depends="clean">
+	    <!-- Create the dist directory structure used by compile -->
+	    <mkdir dir="${build}"/>
+	    <mkdir dir="${dist}"/>
+	  </target>
+	
+	<target name="compile" depends="init"
+	        description="compile the source " >
+	    <!-- Compile the java code from ${src} into ${dist} -->
+	<javac srcdir="${src}" destdir="${build}" classpath="${lib}/asg.cliche.jar"/>
+	</target>
+    <target name="create-jar" depends="compile">
+        <jar destfile="${dist}/ATMSim.jar">
+            <manifest>
+                <attribute name="Main-Class" value="com.excite.atmsim.console.ATMConsole"/>
+                <attribute name="Class-Path" value=". lib/asg.cliche.jar"/>
+            </manifest>
+            <fileset dir="./build"/>
+        </jar>
+        <delete dir="${dist}/lib"/>
+        <mkdir dir="${dist}/lib"/>
+         <copy file="${lib}/asg.cliche.jar" todir="${dist}/lib"/>
+    </target>
+</project>
