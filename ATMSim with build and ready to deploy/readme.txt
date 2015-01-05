@@ -1,10 +1,16 @@
 ##Assumptions & Requirements:
 -Application is written and compiled using JDK1.6 
--java / jre 1.6 or greater is installed on linux machine and is defined in path.
+-java / jre 1.7 or greater is installed on linux machine and is defined in path.
+-Maven 4.0.0
 
-##Executing in linux:
-- Execute ATMSim.jar in ./dist directory. It can be directly executed to start the ATMSim in a console.
-	It has a dependency on a 3rd party jar(asg.cliche.jar), it is placed in the lib directory in dist.
+##Build and Setup: 
+- To perform the maven build; go to the root directory of the project having the pom.xml file and execute the following: 
+	mvn clean install
+- This would create a ./target directory with an executable jar [ATMSim.jar].
+
+##Building & Executing in a linux environment:
+- Execute ATMSim.jar in ./target directory. It can be directly executed to start the ATMSim in a console.
+	It has a dependency on a 3rd party jar(asg.cliche.jar), however maven takes care of this dependency during the build process.
   Use the following command to execute: 
     java -jar ATMSim.jar
 
@@ -34,8 +40,3 @@
  ## ENTER==>'exit' to exit the application
  ##
  ## ENTER==>'help' to see this menu again 
-
-
-##Build and Setup: 
-Use build.xml at the project root directory to build a new jar.
-It creates the ATMSim.jar in ./dist directory.
