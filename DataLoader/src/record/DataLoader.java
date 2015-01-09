@@ -1,4 +1,5 @@
 package record;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,25 +12,23 @@ import java.util.LinkedList;
 
 import record.HotelRecord.Direction;
 
-
-
 public class DataLoader {
 
-private LinkedList<HotelRecord> sensorRecords;
-private Charset charSet;
-private DataProcessor dataProcessor;
+	private LinkedList<HotelRecord> sensorRecords;
+	private Charset charSet;
+	private DataProcessor dataProcessor;
 
-public DataLoader() {
-this.sensorRecords = new LinkedList<HotelRecord>();
-//this.sensorRecordsA = new LinkedList<HotelRecord>();
-this.dataProcessor = new DataProcessor();
-}
+	public DataLoader() {
+		this.sensorRecords = new LinkedList<HotelRecord>();
+		// this.sensorRecordsA = new LinkedList<HotelRecord>();
+		this.dataProcessor = new DataProcessor();
+	}
 
-public static void main(String[] args) throws FileNotFoundException, IOException {
-	DataLoader dl = new DataLoader();
-	dl.load(new FileInputStream("./data.txt"), StandardCharsets.UTF_8);
-}
-
+	public static void main(String[] args) throws FileNotFoundException,
+			IOException {
+		DataLoader dl = new DataLoader();
+		dl.load(new FileInputStream("./data.txt"), StandardCharsets.UTF_8);
+	}
 
 	public void load(InputStream inputStream, Charset charSet)
 			throws IOException {
@@ -61,28 +60,26 @@ public static void main(String[] args) throws FileNotFoundException, IOException
 		}
 	}
 
+	private void parseRecordB(String[] dataLine) {
 
-private void parseRecordB(String[] dataLine) {
+		HotelRecord hotelRecord = new HotelRecord("B", Direction.SOUTH,
+				new Integer(dataLine[0]), new Integer(dataLine[1]));
+		// This means that previous sensor A entry was actually on South.
+		// TODO check approx speed to elliminate parallel hit by north bound
+		// traffic.
+		// TODO Exception if previous is B.
+		this.sensorRecords.getLast().setDirection(Direction.SOUTH);
+		this.sensorRecords.add(hotelRecord);
+		// hotelRecord.s
+		// sensorRecords.add()
+		// TODO Auto-generated method stub
+	}
 
-	HotelRecord hotelRecord = new HotelRecord("B",Direction.SOUTH, new Integer(dataLine[0]) , new Integer(dataLine[1]));
-	//This means that previous sensor A entry was actually on South. 
-	//TODO check approx speed to elliminate parallel hit by north bound traffic.
-	//TODO Exception if previous is B.
-	this.sensorRecords.getLast().setDirection(Direction.SOUTH);
-	this.sensorRecords.add(hotelRecord);
-	//hotelRecord.s
-	//sensorRecords.add()
-	// TODO Auto-generated method stub	
-}
+	private void parseRecordA(String[] dataLine) {
+		HotelRecord hotelRecord = new HotelRecord("A", Direction.NORTH,
+				new Integer(dataLine[0]), new Integer(dataLine[1]));
+		this.sensorRecords.add(hotelRecord);
 
-private void parseRecordA(String[] dataLine) {
-	HotelRecord hotelRecord = new HotelRecord("A",Direction.NORTH, new Integer(dataLine[0]) , new Integer(dataLine[1]));
-	this.sensorRecords.add(hotelRecord);
-	
-}
-
-
-	
-
+	}
 
 }

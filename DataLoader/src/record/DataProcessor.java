@@ -2,7 +2,7 @@ package record;
 import java.util.concurrent.ArrayBlockingQueue;
 
 
-public class DataProcessor {
+public class DataProcessor implements Runnable{
 	private ArrayBlockingQueue<HotelRecord> recordWriteQueue;
 	private static Integer QUEUE_CAPACITY = 200;
 	
@@ -17,6 +17,12 @@ public class DataProcessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void run() {
+		while()
+		
 	}
 	
 	
