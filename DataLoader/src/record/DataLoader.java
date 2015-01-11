@@ -14,20 +14,29 @@ import record.HotelRecord.Direction;
 
 public class DataLoader {
 
-	private LinkedList<HotelRecord> sensorRecords;
-	private Charset charSet;
-	private DataProcessor dataProcessor;
+	private LinkedList<NorthRecord> northBoundRecords;
+	private LinkedList<SouthRecord> southBoundRecords;
+	private static final Charset FILE_CHARSET = StandardCharsets.UTF_8;
+	private static final Integer DEFAULT_INTERVAL = 5*60000;
+	
+	private TrafficDataProcessor northDataProcessor , southDataProcessor;
+	private DataResult northDataResult, southDataResult;
 
 	public DataLoader() {
-		this.sensorRecords = new LinkedList<HotelRecord>();
-		// this.sensorRecordsA = new LinkedList<HotelRecord>();
-		this.dataProcessor = new DataProcessor();
+		this.northBoundRecords = new LinkedList<NorthRecord>();
+		this.southBoundRecords = new LinkedList<SouthRecord>();
+		this.northDataResult = new DataResult(DEFAULT_INTERVAL, 1);
+		this.northDataProcessor = new TrafficDataProcessor(this.northDataResult, DEFAULT_INTERVAL);
+		this.southDataResult = new DataResult(DEFAULT_INTERVAL, 2);
+		this.southDataProcessor = new TrafficDataProcessor(this.southDataResult, DEFAULT_INTERVAL);
 	}
 
 	public static void main(String[] args) throws FileNotFoundException,
 			IOException {
 		DataLoader dl = new DataLoader();
-		dl.load(new FileInputStream("./data.txt"), StandardCharsets.UTF_8);
+		//TODO args[0]
+		dl.load(new FileInputStream("./data.txt"), FILE_CHARSET);
+		System.out.println(dl.northDataResult + " " + dl.southDataResult);
 	}
 
 	public void load(InputStream inputStream, Charset charSet)
@@ -49,36 +58,38 @@ public class DataLoader {
 					this.parseRecordB(dataLines);
 					break;
 				default:
+					//TODO exception
 					break;
 				}
-				if (sensorRecords.size() > 40) {
-					for (int i = 0; i < 20; i++) {
-						this.dataProcessor.addToQueue((sensorRecords.remove()));
-					}
-				}
+				this.checkAndFlushBuffers(this.northBoundRecords, this.northDataProcessor);
+				this.checkAndFlushBuffers(this.southBoundRecords, this.southDataProcessor);			
+			}
+		}
+	}
+	
+
+	private void checkAndFlushBuffers(LinkedList<? extends HotelRecord> records, TrafficDataProcessor dataProcessor) {
+		if (records.size() > 40) {
+			for (int i = 0; i < 20; i++) {
+				dataProcessor.process(records.remove());
 			}
 		}
 	}
 
 	private void parseRecordB(String[] dataLine) {
-
-		HotelRecord hotelRecord = new HotelRecord("B", Direction.SOUTH,
-				new Integer(dataLine[0]), new Integer(dataLine[1]));
+		SouthRecord sensorBHotelRecord = new SouthRecord("B", new Integer(dataLine[0].substring(1)), new Integer(dataLine[1].substring(1)));
 		// This means that previous sensor A entry was actually on South.
 		// TODO check approx speed to elliminate parallel hit by north bound
 		// traffic.
 		// TODO Exception if previous is B.
-		this.sensorRecords.getLast().setDirection(Direction.SOUTH);
-		this.sensorRecords.add(hotelRecord);
-		// hotelRecord.s
-		// sensorRecords.add()
-		// TODO Auto-generated method stub
+		NorthRecord sensorAHotelRecord = this.northBoundRecords.removeLast();
+		this.southBoundRecords.add(new SouthRecord(sensorAHotelRecord));
+		this.southBoundRecords.add(sensorBHotelRecord);
 	}
 
 	private void parseRecordA(String[] dataLine) {
-		HotelRecord hotelRecord = new HotelRecord("A", Direction.NORTH,
-				new Integer(dataLine[0]), new Integer(dataLine[1]));
-		this.sensorRecords.add(hotelRecord);
+		NorthRecord sensorAHotelRecord = new NorthRecord("A", new Integer(dataLine[0].substring(1)), new Integer(dataLine[1].substring(1)));
+		this.northBoundRecords.add(sensorAHotelRecord);
 
 	}
 

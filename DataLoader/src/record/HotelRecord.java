@@ -1,23 +1,20 @@
 package record;
 
+public abstract class HotelRecord {
 
 
-
-
-public class HotelRecord {
-
-	public static final Integer AVERAGE_HEIGHT = 250;
+	public static final Integer AVERAGE_HEIGHT = 2500; 
 	
 	public  enum Direction{NORTH, SOUTH}; 
 	
 	private final String sensor;
-	private Direction direction ;
-	private final Integer frontInterval;
-	private final Integer backInterval;
+	private final Integer frontTimeStamp;
+	private final Integer backTimeStamp;
 	private Double speed;
 	
-	public double getSpeed() {
-		this.speed = (this.speed == null) ? AVERAGE_HEIGHT	/ (backInterval - frontInterval) : this.speed;
+	public Double getSpeed() {
+		// Speed in meters / second = millimeters / millisecond
+		this.speed = (this.speed == null) ? AVERAGE_HEIGHT / (backTimeStamp - frontTimeStamp) : this.speed;
 		return this.speed;
 	}
 	
@@ -25,30 +22,25 @@ public class HotelRecord {
 		return sensor;
 	}
 
-	public HotelRecord(final String sensor,Direction direction,
-			final Integer frontInterval,final Integer backInterval) {
+	public HotelRecord(final String sensor, final Integer frontTimeStamp,final Integer backTimeStamp) {
 		this.sensor = sensor;
-		this.direction = direction;
-		this.frontInterval = frontInterval;
-		this.backInterval = backInterval;
+		this.frontTimeStamp = frontTimeStamp;
+		this.backTimeStamp = backTimeStamp;
 	}
 
 
 
-	public Direction getDirection() {
-		return direction;
-	}
-	public void setDirection(Direction direction) {
-		this.direction = direction;
-	}
-	public Integer getFrontInterval() {
-		return frontInterval;
+	public abstract Direction getDirection();
+	
+	
+	public Integer getFrontTimeStamp() {
+		return frontTimeStamp;
 	}
 /*	public void setFrontInterval(final Integer frontInterval) {
 		this.frontInterval = (this.frontInterval == null) ? frontInterval : this.frontInterval;
 	}*/
-	public Integer getBackInterval() {
-		return backInterval;
+	public Integer getBackTimeStamp() {
+		return backTimeStamp;
 	}
 	/*public void setBackInterval(final Integer backInterval) {
 		this.backInterval = (this.backInterval == null) ? backInterval : this.backInterval;
