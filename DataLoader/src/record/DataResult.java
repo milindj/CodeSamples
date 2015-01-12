@@ -35,7 +35,6 @@ public class DataResult {
 		String periodHeadLine = this.buildHeaderLine(12, periodInterval);
 		int numOfDays = this.hotelSet.size()/this.slotsInADay;
 		for (int day = 0; day < numOfDays; day++) {
-			
 			strBuilder.append("#### Day # ").append(day+1);
 			strBuilder.append("\n");
 			strBuilder.append(periodHeadLine);
@@ -58,7 +57,7 @@ System.out.println(sumOfCountOverDays);
 			count = count + unitTimePeriodRecord.getCountHotels();
 			if ((i % unitMultiplier) == 0) {
 				strBuilder.append(OUT_FORMAT_DELIMITER).append(count/this.numberOfSensors);
-				counts.add(count/this.numberOfSensors);
+				//counts.add(count/this.numberOfSensors);
 				if (sumOfCountOverDays.size() == (this.slotsInADay/unitMultiplier)){
 					sumOfCountOverDays.set(j, count/this.numberOfSensors + sumOfCountOverDays.get(j));
 					j++;
