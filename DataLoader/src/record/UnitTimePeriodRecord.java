@@ -91,5 +91,10 @@ public class UnitTimePeriodRecord {
 		this.countHotels++;
 		return true;
 	}
+
+	public static UnitTimePeriodRecord getEmptyRecord() {
+		
+		return null; 
+	}
 	
 }

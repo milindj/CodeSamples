@@ -37,6 +37,7 @@ public class DataLoader {
 		//TODO args[0]
 		dl.load(new FileInputStream("./data.txt"), FILE_CHARSET);
 		System.out.println(dl.northDataResult + " " + dl.southDataResult);
+		dl.northDataResult.printResults(DEFAULT_INTERVAL);
 	}
 
 	public void load(InputStream inputStream, Charset charSet)
