@@ -15,8 +15,8 @@ import record.HotelRecord.Direction;
 
 public class DataLoader {
 
-	private LinkedList<NorthRecord> northBoundRecords;
-	private LinkedList<SouthRecord> southBoundRecords;
+	private ArrayList<NorthRecord> northBoundRecords = new ArrayList<NorthRecord>();
+	private ArrayList<SouthRecord> southBoundRecords = new ArrayList<SouthRecord>();
 	private static final Charset FILE_CHARSET = StandardCharsets.UTF_8;
 	private static final Integer DEFAULT_INTERVAL = 5 * 60000;
 	private LinkedList<String> sensorA = new LinkedList<String>();
@@ -27,8 +27,6 @@ public class DataLoader {
 	private DataResult northDataResult, southDataResult;
 
 	public DataLoader() {
-		this.northBoundRecords = new LinkedList<NorthRecord>();
-		this.southBoundRecords = new LinkedList<SouthRecord>();
 		this.northDataResult = new DataResult(DEFAULT_INTERVAL, 1);
 		this.northDataProcessor = new TrafficDataProcessor(this.northDataResult, DEFAULT_INTERVAL);
 		this.southDataResult = new DataResult(DEFAULT_INTERVAL, 2);
@@ -86,28 +84,40 @@ public class DataLoader {
 
 	public void load(InputStream inputStream, Charset charSet) throws IOException {
 
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charSet))) {
+		BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charSet));
 			LinkedList<String> orphanAs = new LinkedList<String>();
 			LinkedList<String> unprocessedAs = new LinkedList<String>();;
 			
-			while (true) {
-				
+			while (true) { 
 				while(unprocessedAs.size() > 0){
-				unprocessedAs.removeLast();
+					inputBuffer.addFirst(unprocessedAs.removeLast());
+				}
+				while(inputBuffer.size() < 40){
+					String bufferedLine = br.readLine();
+					if (bufferedLine !=null){
+						inputBuffer.addLast(bufferedLine);
+					}else{
+						break;
+					}
+				}
+				String dataLine1 = inputBuffer.pollFirst();
+				String dataLine2 = inputBuffer.pollFirst();
+				String dataLine3 = inputBuffer.pollFirst();
+				
+				if (dataLine1==null||dataLine2==null){
+					break;
 				}
 				
-				String dataLine1 = br.readLine();
-				String dataLine2 = br.readLine();
-				String dataLine3 = br.readLine();
-				
-				
 				String newLine;
-				if (isA(dataLine1) && isA(dataLine2) && isA(dataLine3)) {
+				if (isA(dataLine1) && isA(dataLine2) && !isB(dataLine3)) {
 					// ideal
 					this.northBoundRecords.add(new NorthRecord("A", dataLine1, dataLine2));
+					if(dataLine3==null){
+						break;
+					}
 					unprocessedAs.add(dataLine3);
 				} else if (isA(dataLine1) && isB(dataLine2) && isA(dataLine3)) {
-					while((newLine = br.readLine()) != null && isA(newLine)){
+					while((newLine = inputBuffer.pollFirst()) != null && isA(newLine)){
 						orphanAs.add(newLine);
 					}
 					String lineB = newLine;
@@ -136,19 +146,69 @@ public class DataLoader {
 						this.southBoundRecords.add(new SouthRecord("B", dataLine2, lineB));
 					}
 				} else if (isA(dataLine1) && isA(dataLine2) && isB(dataLine3)) {
-					throw new RuntimeException("Data is corrupt.");
+					while((newLine = inputBuffer.pollFirst()) != null && isA(newLine)){
+						orphanAs.add(newLine);
+					}
+					String lineB = newLine;
+					if (orphanAs.size() > 0 ) {
+						SouthRecord southRefRecord = new SouthRecord("B", dataLine3, lineB);
+						Double refSouthSpeed = southRefRecord.getSpeed();	
+						//dataLine1 test, assuming dataline2 to be close enough for B
+						String prevOrphan = orphanAs.getFirst();
+						
+						for (int i = 1; i < orphanAs.size(); i++) {
+							String orphanA = orphanAs.get(i);
+							HotelRecord prevRecord = new SouthRecord("A", dataLine1, prevOrphan);
+							HotelRecord orphanRecord = new SouthRecord("A", dataLine1, orphanA);
+							if (Math.abs(refSouthSpeed - prevRecord.getSpeed()) >  Math.abs(refSouthSpeed - orphanRecord.getSpeed())) {
+								prevOrphan = orphanA;
+							}
+						}
+						// prevOrphan is the best match of line1
+						String line1OrphanMatch = prevOrphan; 
+						
+						
+						prevOrphan = orphanAs.getFirst();
+						for (int i = 1; i < orphanAs.size(); i++) {
+							String orphanA = orphanAs.get(i);
+							HotelRecord prevRecord = new SouthRecord("A", dataLine2, prevOrphan);
+							HotelRecord orphanRecord = new SouthRecord("A", dataLine2, orphanA);
+							if (Math.abs(refSouthSpeed - prevRecord.getSpeed()) >  Math.abs(refSouthSpeed - orphanRecord.getSpeed())) {
+								prevOrphan = orphanA;
+							}
+						}
+						// prevOrphan is the best match of line2
+						String line2OrphanMatch = prevOrphan;
+						//Compare the best match between dataline1 and dataline2.
+						SouthRecord record1 = new SouthRecord("A", dataLine2, line1OrphanMatch);
+						SouthRecord record2 = new SouthRecord("A", dataLine2, line2OrphanMatch);
+						
+						if (Math.abs(refSouthSpeed - record1.getSpeed()) >  Math.abs(refSouthSpeed - record2.getSpeed())) {
+							this.southBoundRecords.add(record2);	
+						}else{
+							this.southBoundRecords.add(record1);	
+						}
+						this.southBoundRecords.add(southRefRecord);
+						while(orphanAs.size()>0){
+							unprocessedAs.addFirst(orphanAs.removeLast());
+						}
+					}else {
+						throw new RuntimeException("Unexpected sequence of sensor records d1:d2:d3 = " + dataLine1 + ":" + dataLine2 + ":" + dataLine3);
+					}
 				}
+				this.flushRecordBuffersToProcess(this.northBoundRecords, this.northDataProcessor);
+				this.flushRecordBuffersToProcess(this.southBoundRecords, this.southDataProcessor);				
 			}
-		}
+			br.close();		
 	}
 	
 	
 	private boolean isB(String dataB){
-		return dataB.charAt(0)=='B';
+		return dataB!=null && dataB.charAt(0)=='B';
 	}
 	
 	private boolean isA(String dataA){
-		return dataA.charAt(0)=='A';
+		return dataA!=null && dataA.charAt(0)=='A';
 	}
 
 	private void checkAndFlushBuffers(LinkedList<String> inputBuffer) {
@@ -163,7 +223,6 @@ public class DataLoader {
 					// ideal
 				} else if (dataLine1.charAt(0) == 'A' && dataLine2.charAt(0) == 'B') {
 					// ideal start.
-
 				} else if (dataLine1.charAt(0) == 'A' && dataLine2.charAt(0) == 'A' && dataLine3.charAt(0) == 'B') {
 
 				}
@@ -171,12 +230,11 @@ public class DataLoader {
 		}
 	}
 
-	private void checkAndFlushBuffers(LinkedList<? extends HotelRecord> records, TrafficDataProcessor dataProcessor) {
-		if (records.size() > 40) {
-			for (int i = 0; i < 20; i++) {
-				dataProcessor.process(records.remove());
-			}
+	private void flushRecordBuffersToProcess(ArrayList<? extends HotelRecord> records, TrafficDataProcessor dataProcessor) {
+		for (HotelRecord hotelRecord : records) {
+			dataProcessor.process(hotelRecord);
 		}
+		records.clear();
 	}
 
 	private void parseRecordB(String dataLine) {
@@ -188,8 +246,8 @@ public class DataLoader {
 		// TODO check approx speed to elliminate parallel hit by north bound
 		// traffic.
 		// TODO Exception if previous is B.
-		NorthRecord sensorAHotelRecord = this.northBoundRecords.removeLast();
-		this.southBoundRecords.add(new SouthRecord(sensorAHotelRecord));
+		//NorthRecord sensorAHotelRecord = this.northBoundRecords.removeLast();
+		//this.southBoundRecords.add(new SouthRecord(sensorAHotelRecord));
 		this.southBoundRecords.add(sensorBHotelRecord);
 	}
 

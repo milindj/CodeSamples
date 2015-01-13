@@ -25,7 +25,11 @@ public class DataResult {
 		Double periodSlot = Math.floor(record.getIntervalStartStamp() / record.getInterval()) + dayCount;
 		periodSlot = periodSlot + slotsInADay * dayCount;
 		for (int i = 0; i < periodSlot - this.hotelSet.size(); i++) {
-			this.hotelSet.add(new UnitTimePeriodRecord(this.hotelSet.getLast().getIntervalEndStamp() + 1, record.getInterval()));
+			if (this.hotelSet.size()>0){
+				this.hotelSet.add(new UnitTimePeriodRecord(this.hotelSet.getLast().getIntervalEndStamp() + 1, record.getInterval()));
+			}else{
+				this.hotelSet.add(new UnitTimePeriodRecord(1, record.getInterval()));
+			}
 		}
 		this.hotelSet.add(record);
 	}
@@ -41,11 +45,9 @@ public class DataResult {
 			strBuilder.append("\n");
 			strBuilder.append(this.buildCountsLine(12, periodInterval, day));
 			strBuilder.append("\n");
-			
 		}
-		
-System.out.println(strBuilder);
-System.out.println(sumOfCountOverDays);
+		System.out.println(strBuilder);
+		System.out.println(sumOfCountOverDays);
 	}
 
 	public String buildCountsLine(Integer unitMultiplier, Integer periodInterval, Integer day) {
