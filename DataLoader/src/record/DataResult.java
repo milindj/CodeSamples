@@ -19,19 +19,19 @@ public class DataResult {
 		this.numberOfSensors = numberOfSensors;
 	}
 
-	public void addHotels(UnitTimePeriodRecord record, boolean nextDay) {
+	public void addHotels(UnitTimePeriodRecord periodUnit, boolean nextDay) {
 		if (nextDay)
 			dayCount++;
-		Double periodSlot = Math.floor(record.getIntervalStartStamp() / record.getInterval()) + dayCount;
+		Double periodSlot = Math.floor(periodUnit.getIntervalStartStamp() / periodUnit.getInterval()) + dayCount;
 		periodSlot = periodSlot + slotsInADay * dayCount;
 		for (int i = 0; i < periodSlot - this.hotelSet.size(); i++) {
 			if (this.hotelSet.size()>0){
-				this.hotelSet.add(new UnitTimePeriodRecord(this.hotelSet.getLast().getIntervalEndStamp() + 1, record.getInterval()));
+				this.hotelSet.add(new UnitTimePeriodRecord(this.hotelSet.getLast().getIntervalEndStamp() + 1, periodUnit.getInterval()));
 			}else{
-				this.hotelSet.add(new UnitTimePeriodRecord(1, record.getInterval()));
+				this.hotelSet.add(new UnitTimePeriodRecord(1, periodUnit.getInterval()));
 			}
 		}
-		this.hotelSet.add(record);
+		this.hotelSet.add(periodUnit);
 	}
 
 	public void printResults(Integer periodInterval) {
