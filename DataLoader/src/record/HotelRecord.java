@@ -12,6 +12,7 @@ public abstract class HotelRecord {
 	private final Integer backTimeStamp;
 	private Double speed;
 	
+	
 	public Double getSpeed() {
 		// Speed in meters / second = millimeters / millisecond
 		this.speed = (this.speed == null) ? AVERAGE_HEIGHT / (backTimeStamp - frontTimeStamp) : this.speed;

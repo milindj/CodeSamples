@@ -1,10 +1,14 @@
 package record;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class UnitTimePeriodRecord {
 
 	public enum PeakPeriodType{
 		PEAK, NOT_PEAK, UNDETERMINED
 	}
+	
 	
 	//avg price
 // count of hotels	
@@ -12,21 +16,29 @@ public class UnitTimePeriodRecord {
 // distance btwn hotels  
 	// period time start
 	// period time end
-	private double sumPrice;
-	private Integer countHotels;
+	private double sumPrice =0;
+	private Integer countHotels = 0;
 	private PeakPeriodType peakPeriod; 
-	private double sumDistBtwnHotels;
+	private double sumDistBtwnHotels=0;
 	private Integer intervalStartStamp;
 	private Integer intervalEndStamp;
+	private Integer previousCarEndStamp;
+	private Integer interval;
+	private Boolean capacityFull=false;
+	private final Integer [] speedDistMatrix;
+	
+	public Map<Integer, Integer> getSpeedDistribution() {
+		return speedDistribution;
+	}
+	public Integer[] getSpeedDistMatrix() {
+		return speedDistMatrix;
+	}
+
+	private Map<Integer, Integer> speedDistribution;
+	
 	public Integer getIntervalEndStamp() {
 		return intervalEndStamp;
 	}
-
-	private Integer previousCarEndStamp;
-	private Integer interval;
-	private Boolean capacityFull;
-	
-	
 	public double getSumPrice() {
 		return sumPrice;
 	}
@@ -63,14 +75,12 @@ public class UnitTimePeriodRecord {
 		this.capacityFull = capacityFull;
 	}
 	
-	public UnitTimePeriodRecord(Integer recordStartStamp, Integer interval) {
+	public UnitTimePeriodRecord(Integer recordStartStamp, Integer interval,final Integer [] speedDistMatrix) {
 		this.intervalStartStamp  = (int) (interval * Math.floor(recordStartStamp/interval));
 		this.intervalEndStamp = intervalStartStamp + interval;
 		this.interval = interval;
-		this.sumPrice = 0;
-		this.countHotels = 0;
-		this.sumDistBtwnHotels = 0;
-		this.capacityFull = false;
+		this.speedDistMatrix = speedDistMatrix;
+		this.speedDistribution = this.initSpeedDistMap();
 	}
 
 	public boolean addData(HotelRecord hotelRecord) {
@@ -83,6 +93,7 @@ public class UnitTimePeriodRecord {
 		int front = hotelRecord.getFrontTimeStamp();
 		int back = hotelRecord.getBackTimeStamp();
 		double speed = hotelRecord.getSpeed();
+		this.addSpeedDistribution(hotelRecord.getSpeed());
 		if (this.previousCarEndStamp != null && this.previousCarEndStamp != 0 ){
 			this.sumDistBtwnHotels = this.sumDistBtwnHotels + (hotelRecord.getFrontTimeStamp() - this.previousCarEndStamp) * hotelRecord.getSpeed();
 		}
@@ -92,9 +103,22 @@ public class UnitTimePeriodRecord {
 		return true;
 	}
 
-	public static UnitTimePeriodRecord getEmptyRecord() {
-		
-		return null; 
+	public void addSpeedDistribution(Double speed){
+		for (Integer refSpeed : speedDistMatrix) {
+			if(speed<=refSpeed){
+				this.speedDistribution.put(refSpeed, (this.speedDistribution.get(refSpeed)+1));
+				break;
+			}
+		}
 	}
+	
+	private Map<Integer, Integer> initSpeedDistMap() {
+		Map<Integer, Integer> speedMap = new HashMap<Integer, Integer>();
+		for (Integer integer : speedDistMatrix) {
+			speedMap.put(integer, 0);
+		}
+		return speedMap;
+	}
+	
 	
 }

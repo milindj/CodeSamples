@@ -11,8 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import record.HotelRecord.Direction;
-
 public class DataLoader {
 
 	private ArrayList<NorthRecord> northBoundRecords = new ArrayList<NorthRecord>();
@@ -22,17 +20,24 @@ public class DataLoader {
 	private LinkedList<String> sensorA = new LinkedList<String>();
 	private LinkedList<String> sensorB = new LinkedList<String>();
 	private LinkedList<String> inputBuffer = new LinkedList<String>();
+	public static final Integer[] DEFAULT_SPEED_MATRIX_SCALE = {0,5,10,15,20,25,30,35,40};
+	private static final Integer NUM_NORTH_SENSORS =1;
+	private static final Integer NUM_SOUTH_SENSORS =2;
 
 	private TrafficDataProcessor northDataProcessor, southDataProcessor;
 	private DataResult northDataResult, southDataResult;
 
 	public DataLoader() {
-		this.northDataResult = new DataResult(DEFAULT_INTERVAL, 1);
-		this.northDataProcessor = new TrafficDataProcessor(this.northDataResult, DEFAULT_INTERVAL);
-		this.southDataResult = new DataResult(DEFAULT_INTERVAL, 2);
-		this.southDataProcessor = new TrafficDataProcessor(this.southDataResult, DEFAULT_INTERVAL);
+		this(DEFAULT_INTERVAL,DEFAULT_SPEED_MATRIX_SCALE);
 	}
 
+	public DataLoader(Integer interval,Integer[] speedDistMatrix) {
+		this.northDataResult = new DataResult(interval, NUM_NORTH_SENSORS);
+		this.northDataProcessor = new TrafficDataProcessor(this.northDataResult, interval, speedDistMatrix);
+		this.southDataResult = new DataResult(interval, NUM_SOUTH_SENSORS);
+		this.southDataProcessor = new TrafficDataProcessor(this.southDataResult, interval, speedDistMatrix);
+	}
+	
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		DataLoader dl = new DataLoader();
 		// TODO args[0]
@@ -43,11 +48,9 @@ public class DataLoader {
 	}
 
 	public void load(InputStream inputStream, Charset charSet) throws IOException {
-
-		BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charSet));
+		try(BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charSet))){
 			LinkedList<String> orphanAs = new LinkedList<String>();
-			LinkedList<String> unprocessedAs = new LinkedList<String>();;
-			
+			LinkedList<String> unprocessedAs = new LinkedList<String>();
 			while (true) { 
 				while(unprocessedAs.size() > 0){
 					inputBuffer.addFirst(unprocessedAs.removeLast());
@@ -157,8 +160,9 @@ public class DataLoader {
 				}
 				this.flushRecordBuffersToProcess(this.northBoundRecords, this.northDataProcessor);
 				this.flushRecordBuffersToProcess(this.southBoundRecords, this.southDataProcessor);				
-			}
-			br.close();		
+			}	
+		}
+		
 	}
 	
 	
