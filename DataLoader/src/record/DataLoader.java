@@ -42,46 +42,6 @@ public class DataLoader {
 		dl.southDataResult.printResults(DEFAULT_INTERVAL);
 	}
 
-	/*
-	 * public void load(InputStream inputStream, Charset charSet) throws
-	 * IOException {
-	 * 
-	 * try (BufferedReader br = new BufferedReader(new InputStreamReader(
-	 * inputStream, charSet))) { String firstLine, secondLine; while ((firstLine
-	 * = br.readLine()) != null && (secondLine = br.readLine()) != null) {
-	 * String[] dataLines = { firstLine, secondLine }; // check dataline 0 /1
-	 * A!=B bad data switch (dataLines[1].charAt(0)) { case 'A':
-	 * this.parseRecordA(dataLines); break; case 'B': // sensor b record
-	 * this.parseRecordB(dataLines); break; default: //TODO exception break; }
-	 * this.checkAndFlushBuffers(this.northBoundRecords,
-	 * this.northDataProcessor);
-	 * this.checkAndFlushBuffers(this.southBoundRecords,
-	 * this.southDataProcessor); } } }
-	 * 
-	 * 
-	 * private void checkAndFlushBuffers(LinkedList<? extends HotelRecord>
-	 * records, TrafficDataProcessor dataProcessor) { if (records.size() > 40) {
-	 * for (int i = 0; i < 20; i++) { dataProcessor.process(records.remove()); }
-	 * } }
-	 * 
-	 * private void parseRecordB(String[] dataLine) { SouthRecord
-	 * sensorBHotelRecord = new SouthRecord("B", new
-	 * Integer(dataLine[0].substring(1)), new
-	 * Integer(dataLine[1].substring(1))); // This means that previous sensor A
-	 * entry was actually on South. // TODO check approx speed to elliminate
-	 * parallel hit by north bound // traffic. // TODO Exception if previous is
-	 * B. NorthRecord sensorAHotelRecord = this.northBoundRecords.removeLast();
-	 * this.southBoundRecords.add(new SouthRecord(sensorAHotelRecord));
-	 * this.southBoundRecords.add(sensorBHotelRecord); }
-	 * 
-	 * private void parseRecordA(String[] dataLine) {
-	 * if(dataLine[0].charAt(0)=='A'){ NorthRecord sensorAHotelRecord = new
-	 * NorthRecord("A", new Integer(dataLine[0].substring(1)), new
-	 * Integer(dataLine[1].substring(1)));
-	 * this.northBoundRecords.add(sensorAHotelRecord); }else{ throw new
-	 * RuntimeException("Bad record, could not parse."); } }
-	 */
-
 	public void load(InputStream inputStream, Charset charSet) throws IOException {
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charSet));
@@ -164,9 +124,8 @@ public class DataLoader {
 								prevOrphan = orphanA;
 							}
 						}
-						// prevOrphan is the best match of line1
+						//Now prevOrphan is the best match of line1
 						String line1OrphanMatch = prevOrphan; 
-						
 						
 						prevOrphan = orphanAs.getFirst();
 						for (int i = 1; i < orphanAs.size(); i++) {
@@ -177,7 +136,7 @@ public class DataLoader {
 								prevOrphan = orphanA;
 							}
 						}
-						// prevOrphan is the best match of line2
+						//Now prevOrphan is the best match of line2
 						String line2OrphanMatch = prevOrphan;
 						//Compare the best match between dataline1 and dataline2.
 						SouthRecord record1 = new SouthRecord("A", dataLine2, line1OrphanMatch);
@@ -211,52 +170,10 @@ public class DataLoader {
 		return dataA!=null && dataA.charAt(0)=='A';
 	}
 
-	private void checkAndFlushBuffers(LinkedList<String> inputBuffer) {
-		if (inputBuffer.size() > 40) {
-			String orphanA = "";
-			for (int i = 0; i < 20; i++) {
-				String dataLine1 = inputBuffer.remove();
-				String dataLine2 = inputBuffer.remove();
-				String dataLine3 = inputBuffer.remove();
-				String dataLine4 = inputBuffer.remove();
-				if (dataLine1.charAt(0) == 'A' && dataLine2.charAt(0) == 'A' && dataLine3.charAt(0) != 'B') {
-					// ideal
-				} else if (dataLine1.charAt(0) == 'A' && dataLine2.charAt(0) == 'B') {
-					// ideal start.
-				} else if (dataLine1.charAt(0) == 'A' && dataLine2.charAt(0) == 'A' && dataLine3.charAt(0) == 'B') {
-
-				}
-			}
-		}
-	}
-
 	private void flushRecordBuffersToProcess(ArrayList<? extends HotelRecord> records, TrafficDataProcessor dataProcessor) {
 		for (HotelRecord hotelRecord : records) {
 			dataProcessor.process(hotelRecord);
 		}
 		records.clear();
 	}
-
-	private void parseRecordB(String dataLine) {
-
-		// Steal last record from A.
-
-		SouthRecord sensorBHotelRecord = new SouthRecord("B", new Integer(dataLine.substring(1)), new Integer(dataLine.substring(1)));
-		// This means that previous sensor A entry was actually on South.
-		// TODO check approx speed to elliminate parallel hit by north bound
-		// traffic.
-		// TODO Exception if previous is B.
-		//NorthRecord sensorAHotelRecord = this.northBoundRecords.removeLast();
-		//this.southBoundRecords.add(new SouthRecord(sensorAHotelRecord));
-		this.southBoundRecords.add(sensorBHotelRecord);
-	}
-
-	/*
-	 * private void parseRecordA(String dataLine) { if(dataLine.charAt(0)=='A'){
-	 * NorthRecord sensorAHotelRecord = new NorthRecord("A", new
-	 * Integer(dataLine[0].substring(1)), new
-	 * Integer(dataLine[1].substring(1)));
-	 * this.northBoundRecords.add(sensorAHotelRecord); }else{ throw new
-	 * RuntimeException("Bad record, could not parse."); } }
-	 */
 }

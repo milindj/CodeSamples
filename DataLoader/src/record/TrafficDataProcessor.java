@@ -2,24 +2,18 @@ package record;
 
 public class TrafficDataProcessor {
 	private DataResult result;
-	private int unitPeriodStartTime;
 	private UnitTimePeriodRecord currentUnitRecord;
 	private final Integer periodInterval;
-	private Integer numberOfSensors;
 
 	public TrafficDataProcessor(DataResult result, final Integer periodInterval) {
 		this.result = result;
 		this.periodInterval = periodInterval;
 	}
 
-	public void process(HotelRecord hotelRecord) {
-		
+	public void process(HotelRecord hotelRecord) {		
 		if (currentUnitRecord == null) {
 			this.currentUnitRecord = new UnitTimePeriodRecord(hotelRecord.getFrontTimeStamp(), this.periodInterval);
 		}
-		
-		
-		
 		if (hotelRecord.getFrontTimeStamp() > this.currentUnitRecord.getIntervalEndStamp()) {
 			this.result.addHotels(currentUnitRecord, false);
 			this.currentUnitRecord = new UnitTimePeriodRecord(hotelRecord.getFrontTimeStamp(), this.periodInterval);		
@@ -32,8 +26,6 @@ public class TrafficDataProcessor {
 			this.currentUnitRecord = new UnitTimePeriodRecord(hotelRecord.getFrontTimeStamp(), this.periodInterval);		
 			this.currentUnitRecord.addData(hotelRecord);
 		}
-		
-		
 	}
 
 }

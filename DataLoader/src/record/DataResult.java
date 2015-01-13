@@ -41,7 +41,7 @@ public class DataResult {
 		for (int day = 0; day < numOfDays; day++) {
 			strBuilder.append("#### Day # ").append(day+1);
 			strBuilder.append("\n");
-			strBuilder.append(periodHeadLine);
+		///	strBuilder.append(periodHeadLine);
 			strBuilder.append("\n");
 			strBuilder.append(this.buildCountsLine(12, periodInterval, day));
 			strBuilder.append("\n");
