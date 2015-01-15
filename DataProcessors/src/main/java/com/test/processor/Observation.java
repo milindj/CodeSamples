@@ -2,23 +2,20 @@ package com.test.processor;
 
 import java.util.Date;
 
+/**
+ * Incoming feed POJO
+ * @author Milind
+ *
+ */
 public class Observation {
-	private Integer price;
 
-	String siteUUID; // UUID of the site of the observation
+	// UUID of the site of the observation
+	String siteUUID; 
 	String observationUUID;
 	Double observedValue;
 	String observedUnits;
 	private Date observationTime;
 	private GeoLocation location;
-
-	public Integer getPrice() {
-		return price;
-	}
-
-	public void setPrice(Integer price) {
-		this.price = price;
-	}
 
 	public String getSiteUUID() {
 		return siteUUID;
@@ -67,7 +64,7 @@ public class Observation {
 	public void setLocation(GeoLocation location) {
 		this.location = location;
 	}
-
+	
 	public class GeoLocation {
 
 		private Double latitude, longitude;

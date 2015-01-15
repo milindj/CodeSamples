@@ -7,7 +7,7 @@ import java.util.List;
 import com.test.processor.UnitPeriodRecord;
 
 /**
- * Dummy persistant store. 
+ * Dummy persistent store. 
  * @author Milind
  *
  */
@@ -20,18 +20,20 @@ public class PersistenceStore {
 	}
 
 	/**
-	 * Searches for appropriate unit record of TimePeriod and GeoHash.
+	 * Dummy.
+	 * Searches for appropriate unit record which matches the unitType, TimePeriod and GeoHash.
 	 * @param normTimeStamp
 	 * @param geoHash
+	 * @param unitType 
 	 * @return
 	 */
-	public UnitPeriodRecord searchRecord(Date normTimeStamp, String geoHash) {
+	public UnitPeriodRecord searchRecord(Date normTimeStamp, String geoHash, String unitType) {
 		for (UnitPeriodRecord unitPeriodRecord : observationRecords) {
 			if (unitPeriodRecord.getGeoArea().getGeoHash().equals(geoHash)
 					&& unitPeriodRecord.getPeriodStart().equals(normTimeStamp)){
 				return unitPeriodRecord;
 			}
 		}
-	}
-	
+		return null;
+	}	
 }

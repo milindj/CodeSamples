@@ -1,5 +1,10 @@
 package com.test.processor;
 
+/**
+ * A class defining the space dimension to contain the unit-records.
+ * @author Milind
+ *
+ */
 public class GeoArea {
 	String geoHash;
 	Integer geoHashPrecision;
@@ -29,6 +34,4 @@ public class GeoArea {
 	public void setGeoHashPrecision(Integer geoHashPrecision) {
 		this.geoHashPrecision = geoHashPrecision;
 	}
-	
-	
 }

@@ -6,14 +6,13 @@ import java.util.Date;
 
 import com.test.processor.Observation;
 import com.test.processor.UnitPeriodRecord;
-import com.test.processor.Observation.GeoData;
 import com.test.processor.Observation.GeoLocation;
 import com.test.processor.PersistenceStore;
 
 import ch.hsr.geohash.GeoHash;
 
 /**
- * A runnable task for processing bunch of observations into a more coarse UnitPeriodRecord.
+ * A runnable task for processing a bunch of observations into a more coarse UnitPeriodRecord.
  * @author Milind
  *
  */
@@ -30,33 +29,37 @@ public class ProcessFeed implements Runnable {
 
 	@Override
 	public void run() {
+		//Process all the observations one by one.
 		for (Observation observation : this.localObservationsBuffer) {
-			//Period& geohash slot search params
-			Date normTimeStamp = this.normaliseTimeStamp(observation.getTimeStamp(), Calendar.HOUR);
+			
+			//Identify the space&time a.k.a period & geohash slot.
+			Date normTimeStamp = this.normaliseTimeStamp(observation.getObservationTime(), Calendar.HOUR);
 			String geoHash = this.convertToGeoHash(observation.getLocation(),GEO_PRECISION);			
 			
 			//Get the unitRecord/ bucket where this observation fits in terms of time and location.
-			UnitPeriodRecord unitPeriodRecord = this.persistenceStore.searchRecord(normTimeStamp, geoHash);	
-			//Calculate information, add-up for averages and so to have relevant and more coarse data.
-			unitPeriodRecord.setSumPrice(observation.getPrice() + unitPeriodRecord.getSumPrice());
+			UnitPeriodRecord unitPeriodRecord = this.persistenceStore.searchRecord(normTimeStamp, geoHash, observation.getObservedUnits());	
+			
+			//Calculate information, sum-up to calculate later averages and thus have relevant and more coarse data.
+			unitPeriodRecord.setSumValues(observation.getObservedValue() + unitPeriodRecord.getSumValues());
 			unitPeriodRecord.incrementRecordCount();			
 		}
 	}
 
 	/**
 	 * Normalises an input date to the closest time unit. Ex. for Minutes its
-	 * equivalent to: cal.set(Calendar.MILLISECOND, 0); cal.set(Calendar.SECOND,
-	 * 0); ..and so on
+	 * equivalent to: 
+	 * cal.set(Calendar.MILLISECOND, 0); 
+	 * cal.set(Calendar.SECOND, 0); 
+	 * ..and so on
 	 * 
 	 * @param date
-	 *            Ex. Calendar.HOUR
-	 * @param timeUnit
+	 * @param timeUnit Ex. Calendar.HOUR
 	 * @return
 	 */
 	private Date normaliseTimeStamp(Date date, int timeUnit) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		// Keeping normalising/set=0 upto given timeunit.
+		// Keeping normalize ie set it to 0 upto given timeunit.
 		for (int i = Calendar.MILLISECOND; i < timeUnit; i++) {
 			cal.set(i, 0);
 		}

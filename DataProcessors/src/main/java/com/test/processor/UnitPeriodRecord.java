@@ -1,6 +1,5 @@
 package com.test.processor;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Set;
 
@@ -8,32 +7,48 @@ import com.test.processor.GeoArea;
 
 /**
  * Unit persistent record object. May represent a row in a db table.
+ * Data is summarize into the dimensions of space and a time (geohash & time-period resp.)
  * This is a more coarse form of record, which is suitable to maintain and generate quantitative/analytical data from it.
- * Data is summarize into the dimension of geohash(location-area) and a time period.
  * @author Milind
  *
  */
 public class UnitPeriodRecord {
 	//Date here is the timestamp of period start slot. 
 	Date periodStart;
-	//Period governs the group of observations within this time-frame.
+	//Period denotes the span of observations within this time-frame.
 	Long periodInMinutes;
-	// A less precise geo-area covering multiple locations
+	// A less precise geo-area covering multiple locations and defining the space;
+	// within which all observations were received from.
 	GeoArea geoArea;
-	
-	Set<String> siteUUIDs; // Set of siteUUids. 
+	// Set of siteUUids. 
+	Set<String> siteUUIDs; 
 	
 	//summarize data.
-	Integer sumPrice;
-	Integer maxPosDeviation;
-	Integer maxNegDeviation;
+	Double sumValues;
+	Double maxPosDeviation;
+	Double maxNegDeviation;
 	//A count helps to calculate average and so on.
 	Integer countOfRecords; 
 	
+	//Getter / setters.
 	public void incrementRecordCount() {
 		this.countOfRecords++;
 	}
-	
+	public Set<String> getSiteUUIDs() {
+		return siteUUIDs;
+	}
+	public void addToSiteUUIDs(String siteUUID) {
+		this.siteUUIDs.add(siteUUID);
+	}
+	public Double getSumValues() {
+		return sumValues;
+	}
+	public void setSumValues(Double sumValues) {
+		this.sumValues = sumValues;
+	}
+	public Integer getCountOfRecords() {
+		return countOfRecords;
+	}
 	public Date getPeriodStart() {
 		return periodStart;
 	}
@@ -46,22 +61,16 @@ public class UnitPeriodRecord {
 	public void setPeriodInMinutes(Long periodInMinutes) {
 		this.periodInMinutes = periodInMinutes;
 	}
-	public Integer getSumPrice() {
-		return sumPrice;
-	}
-	public void setSumPrice(Integer sumPrice) {
-		this.sumPrice = sumPrice;
-	}
-	public Integer getMaxPosDeviation() {
+	public Double getMaxPosDeviation() {
 		return maxPosDeviation;
 	}
-	public void setMaxPosDeviation(Integer maxPosDeviation) {
+	public void setMaxPosDeviation(Double maxPosDeviation) {
 		this.maxPosDeviation = maxPosDeviation;
 	}
-	public Integer getMaxNegDeviation() {
+	public Double getMaxNegDeviation() {
 		return maxNegDeviation;
 	}
-	public void setMaxNegDeviation(Integer maxNegDeviation) {
+	public void setMaxNegDeviation(Double maxNegDeviation) {
 		this.maxNegDeviation = maxNegDeviation;
 	}
 	public GeoArea getGeoArea() {
