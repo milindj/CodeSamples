@@ -1,12 +1,12 @@
-package record;
+package com.sample.dataloader;
 
 public class TrafficDataProcessor {
 	private DataResult result;
 	private UnitTimePeriodRecord currentUnitRecord;
 	private final Integer periodInterval;
-	private final Integer [] speedDistMatrix;
+	private final int [] speedDistMatrix;
 
-	public TrafficDataProcessor(DataResult result, final Integer periodInterval, Integer[] speedDistMatrix) {
+	public TrafficDataProcessor(DataResult result, final Integer periodInterval, int[] speedDistMatrix) {
 		this.result = result;
 		this.periodInterval = periodInterval;
 		this.speedDistMatrix = speedDistMatrix;
@@ -17,14 +17,14 @@ public class TrafficDataProcessor {
 			this.currentUnitRecord = new UnitTimePeriodRecord(hotelRecord.getFrontTimeStamp(), this.periodInterval,this.speedDistMatrix);
 		}
 		if (hotelRecord.getFrontTimeStamp() > this.currentUnitRecord.getIntervalEndStamp()) {
-			this.result.addHotels(currentUnitRecord, false);
+			this.result.addHotelRecordInSlots(currentUnitRecord, false);
 			this.currentUnitRecord = new UnitTimePeriodRecord(hotelRecord.getFrontTimeStamp(), this.periodInterval,this.speedDistMatrix);		
 			this.currentUnitRecord.addData(hotelRecord);
 		} else if ( hotelRecord.getFrontTimeStamp() > this.currentUnitRecord.getIntervalStartStamp()){
 			this.currentUnitRecord.addData(hotelRecord);
 		} else if (hotelRecord.getFrontTimeStamp() < this.currentUnitRecord.getIntervalStartStamp()) {
 			//Next day.
-			this.result.addHotels(currentUnitRecord, true);
+			this.result.addHotelRecordInSlots(currentUnitRecord, true);
 			this.currentUnitRecord = new UnitTimePeriodRecord(hotelRecord.getFrontTimeStamp(), this.periodInterval,this.speedDistMatrix);		
 			this.currentUnitRecord.addData(hotelRecord);
 		}

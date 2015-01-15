@@ -1,4 +1,4 @@
-package record;
+package com.sample.dataloader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,12 +25,12 @@ public class UnitTimePeriodRecord {
 	private Integer previousCarEndStamp;
 	private Integer interval;
 	private Boolean capacityFull=false;
-	private final Integer [] speedDistMatrix;
+	private final int [] speedDistMatrix;
 	
 	public Map<Integer, Integer> getSpeedDistribution() {
 		return speedDistribution;
 	}
-	public Integer[] getSpeedDistMatrix() {
+	public int[] getSpeedDistMatrix() {
 		return speedDistMatrix;
 	}
 
@@ -75,7 +75,7 @@ public class UnitTimePeriodRecord {
 		this.capacityFull = capacityFull;
 	}
 	
-	public UnitTimePeriodRecord(Integer recordStartStamp, Integer interval,final Integer [] speedDistMatrix) {
+	public UnitTimePeriodRecord(Integer recordStartStamp, Integer interval,final int [] speedDistMatrix) {
 		this.intervalStartStamp  = (int) (interval * Math.floor(recordStartStamp/interval));
 		this.intervalEndStamp = intervalStartStamp + interval;
 		this.interval = interval;
@@ -94,27 +94,27 @@ public class UnitTimePeriodRecord {
 		int back = hotelRecord.getBackTimeStamp();
 		double speed = hotelRecord.getSpeed();
 		this.addSpeedDistribution(hotelRecord.getSpeed());
+		this.countHotels++;
 		if (this.previousCarEndStamp != null && this.previousCarEndStamp != 0 ){
 			this.sumDistBtwnHotels = this.sumDistBtwnHotels + (hotelRecord.getFrontTimeStamp() - this.previousCarEndStamp) * hotelRecord.getSpeed();
 		}
 		this.previousCarEndStamp = hotelRecord.getBackTimeStamp();
 		this.sumPrice = this.sumPrice + hotelRecord.getSpeed();
-		this.countHotels++;
 		return true;
 	}
 
 	public void addSpeedDistribution(Double speed){
 		for (Integer refSpeed : speedDistMatrix) {
 			if(speed<=refSpeed){
-				this.speedDistribution.put(refSpeed, (this.speedDistribution.get(refSpeed)+1));
+				this.speedDistribution.put(refSpeed,  1 + this.speedDistribution.get(refSpeed));
 				break;
-			}
+			} 
 		}
 	}
 	
 	private Map<Integer, Integer> initSpeedDistMap() {
 		Map<Integer, Integer> speedMap = new HashMap<Integer, Integer>();
-		for (Integer integer : speedDistMatrix) {
+		for (int integer : speedDistMatrix) {
 			speedMap.put(integer, 0);
 		}
 		return speedMap;

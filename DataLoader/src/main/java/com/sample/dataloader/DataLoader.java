@@ -1,4 +1,4 @@
-package record;
+package com.sample.dataloader;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -20,7 +20,7 @@ public class DataLoader {
 	private LinkedList<String> sensorA = new LinkedList<String>();
 	private LinkedList<String> sensorB = new LinkedList<String>();
 	private LinkedList<String> inputBuffer = new LinkedList<String>();
-	public static final Integer[] DEFAULT_SPEED_MATRIX_SCALE = {0,5,10,15,20,25,30,35,40};
+	public static final int[] DEFAULT_SPEED_MATRIX_SCALE_MPS = {0,5,10,15,20,25,30,35,40};
 	private static final Integer NUM_NORTH_SENSORS =1;
 	private static final Integer NUM_SOUTH_SENSORS =2;
 
@@ -28,14 +28,14 @@ public class DataLoader {
 	private DataResult northDataResult, southDataResult;
 
 	public DataLoader() {
-		this(DEFAULT_INTERVAL,DEFAULT_SPEED_MATRIX_SCALE);
+		this(DEFAULT_INTERVAL,DEFAULT_SPEED_MATRIX_SCALE_MPS); 
 	}
 
-	public DataLoader(Integer interval,Integer[] speedDistMatrix) {
+	public DataLoader(Integer interval,int[] speedDistMatrixMPS) {
 		this.northDataResult = new DataResult(interval, NUM_NORTH_SENSORS);
-		this.northDataProcessor = new TrafficDataProcessor(this.northDataResult, interval, speedDistMatrix);
+		this.northDataProcessor = new TrafficDataProcessor(this.northDataResult, interval, speedDistMatrixMPS);
 		this.southDataResult = new DataResult(interval, NUM_SOUTH_SENSORS);
-		this.southDataProcessor = new TrafficDataProcessor(this.southDataResult, interval, speedDistMatrix);
+		this.southDataProcessor = new TrafficDataProcessor(this.southDataResult, interval, speedDistMatrixMPS);
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException {
@@ -43,7 +43,7 @@ public class DataLoader {
 		// TODO args[0]
 		dl.load(new FileInputStream("./data.txt"), FILE_CHARSET);
 		System.out.println(dl.northDataResult + " " + dl.southDataResult);
-		dl.northDataResult.printResults(DEFAULT_INTERVAL);
+		//dl.northDataResult.printResults(DEFAULT_INTERVAL);
 		dl.southDataResult.printResults(DEFAULT_INTERVAL);
 	}
 
@@ -158,7 +158,7 @@ public class DataLoader {
 						throw new RuntimeException("Unexpected sequence of sensor records d1:d2:d3 = " + dataLine1 + ":" + dataLine2 + ":" + dataLine3);
 					}
 				}
-				this.flushRecordBuffersToProcess(this.northBoundRecords, this.northDataProcessor);
+				//this.flushRecordBuffersToProcess(this.northBoundRecords, this.northDataProcessor);
 				this.flushRecordBuffersToProcess(this.southBoundRecords, this.southDataProcessor);				
 			}	
 		}

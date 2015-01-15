@@ -1,4 +1,4 @@
-package record;
+package com.sample.dataloader;
 
 public class SouthRecord extends HotelRecord {
 

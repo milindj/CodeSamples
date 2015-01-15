@@ -1,4 +1,4 @@
-package record;
+package com.sample.dataloader;
 
 public abstract class HotelRecord {
 
