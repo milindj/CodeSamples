@@ -23,12 +23,12 @@ public class ExecuteDataLoader {
 	private static final Long UNIT_PERIOD = 5 * 60000l; // 5mins.
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		if (args.length <= 0 || args[0] == null) {
-			throw new RuntimeException("Please supply the data file as arguments say ./data.txt ");
+		if (args.length <= 1 || args[0] == null || args[1] == null) {
+			throw new RuntimeException("Please supply the data and result files as arguments say ./data.txt and result file as ./Result.csv ");
 		}
 		CarDataLoader1N2S dl = new CarDataLoader1N2S(UNIT_PERIOD, REF_SPEED_DIST_MATRIX_MPS);
 		List<DataAggregator> dataAggregators = dl.loadRecords(new FileInputStream(args[0]), FILE_CHARSET);
-		try(PrintWriter out = new PrintWriter("./Result.csv");){
+		try(PrintWriter out = new PrintWriter(args[1]);){
 			for (DataAggregator  dataAggregator: dataAggregators) {
 				out.println("############# Direction: " + dataAggregator.getDirection());
 				//Per hour; UnitPeriot is 5mins; hence 1 hr = 12slots*5mins = 60 mins and so on.

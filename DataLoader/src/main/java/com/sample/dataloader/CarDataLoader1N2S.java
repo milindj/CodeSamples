@@ -8,11 +8,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 import com.sample.dataloader.SensorRecord.Direction;
 import com.sample.dataprocessor.DataAggregator;
-
 import static com.sample.dataloader.SensorRecord.Sensor.*;
+
 /**
  * Implementation of a solution to measure data from 1 north and two south way sensors.
  * Loads and sorts the data into a more coarse form. 
@@ -24,9 +23,9 @@ public class CarDataLoader1N2S implements SensorDataLoader{
 	private static final Integer NUM_NORTH_SENSORS = 1;
 	private static final Integer NUM_SOUTH_SENSORS = 2;
 	private LinkedList<String> inputBuffer = new LinkedList<String>();
-	private ArrayList<NorthRecord> northBoundRecords = new ArrayList<NorthRecord>();
-	private ArrayList<SouthRecord> southBoundRecords = new ArrayList<SouthRecord>();
-	private TrafficDataManager northTrafficManager, southTrafficManager;
+	private ArrayList<NorthSensorRecord> northBoundRecords = new ArrayList<NorthSensorRecord>();
+	private ArrayList<SouthSensorRecord> southBoundRecords = new ArrayList<SouthSensorRecord>();
+	private DataClassifier northTrafficManager, southTrafficManager;
 	private DataAggregator northDataAggr, southDataAggr;
 
 	/**
@@ -36,13 +35,13 @@ public class CarDataLoader1N2S implements SensorDataLoader{
 	 */
 	public CarDataLoader1N2S(Long unitPeriod, int[] speedDistMatrixMPS) {
 		this.northDataAggr = new DataAggregator(unitPeriod, NUM_NORTH_SENSORS, speedDistMatrixMPS, Direction.NORTH);
-		this.northTrafficManager = new TrafficDataManager(this.northDataAggr, unitPeriod, speedDistMatrixMPS);
+		this.northTrafficManager = new DataClassifier(this.northDataAggr, unitPeriod, speedDistMatrixMPS);
 		this.southDataAggr = new DataAggregator(unitPeriod, NUM_SOUTH_SENSORS, speedDistMatrixMPS, Direction.SOUTH);
-		this.southTrafficManager = new TrafficDataManager(this.southDataAggr, unitPeriod, speedDistMatrixMPS);
+		this.southTrafficManager = new DataClassifier(this.southDataAggr, unitPeriod, speedDistMatrixMPS);
 	}
 	
 	/**
-	 * Loads and sort the data into appropriate sensors. 
+	 * Loads and sort the data into appropriate sensor records. 
 	 * @param inputStream input data stream.
 	 * @param charSet charset of the input data.
 	 * @return DataAggregator,which contains coarse data, in a ready to be calculated form.
@@ -77,7 +76,7 @@ public class CarDataLoader1N2S implements SensorDataLoader{
 				String newLine;
 				if (isA(dataLine1) && isA(dataLine2) && !isB(dataLine3)) {
 					// ideal A north record case 'AA(A|null)'.
-					this.northBoundRecords.add(new NorthRecord(A, dataLine1, dataLine2));
+					this.northBoundRecords.add(new NorthSensorRecord(A, dataLine1, dataLine2));
 					if (dataLine3 == null) {
 						break;
 					}
@@ -94,14 +93,14 @@ public class CarDataLoader1N2S implements SensorDataLoader{
 						// Choose the combo from southward A amongst orphans and dataLine3,
 						// compare the above to have the best speed match with sensor B.
 						String orphanA;
-						SouthRecord southRefRecord = new SouthRecord(B, dataLine2, lineB);
+						SouthSensorRecord southRefRecord = new SouthSensorRecord(B, dataLine2, lineB);
 						Double refSouthSpeed = southRefRecord.getSpeed();
 						String trialLine = dataLine3;
 						// Iterate to find closest speed match with corresponding B sensors.
 						while (orphanAs.size() > 0) {
 							orphanA = orphanAs.removeLast();
-							SensorRecord orphanRecord = new SouthRecord(A, dataLine1, orphanA);
-							SensorRecord trialRecord = new SouthRecord(A, dataLine1, trialLine);
+							SensorRecord orphanRecord = new SouthSensorRecord(A, dataLine1, orphanA);
+							SensorRecord trialRecord = new SouthSensorRecord(A, dataLine1, trialLine);
 							if (Math.abs(refSouthSpeed - trialRecord.getSpeed()) > Math.abs(refSouthSpeed - orphanRecord.getSpeed())) {
 								unprocessedAs.add(trialLine);
 								trialLine = orphanA;
@@ -110,11 +109,11 @@ public class CarDataLoader1N2S implements SensorDataLoader{
 							}
 						}
 						this.southBoundRecords.add(southRefRecord);
-						this.southBoundRecords.add(new SouthRecord(A, dataLine1, trialLine));
+						this.southBoundRecords.add(new SouthSensorRecord(A, dataLine1, trialLine));
 					} else {
 						// ideal 'ABAB' scenario, hence simply create two south records.
-						this.southBoundRecords.add(new SouthRecord(A, dataLine1, dataLine3));
-						this.southBoundRecords.add(new SouthRecord(B, dataLine2, lineB));
+						this.southBoundRecords.add(new SouthSensorRecord(A, dataLine1, dataLine3));
+						this.southBoundRecords.add(new SouthSensorRecord(B, dataLine2, lineB));
 					}
 				} else if (isA(dataLine1) && isA(dataLine2) && isB(dataLine3)) {
 					// scenario where we have a trailing A before south record like (A)AB(A)AB
@@ -123,14 +122,14 @@ public class CarDataLoader1N2S implements SensorDataLoader{
 					}
 					String lineB = newLine;
 					if (orphanAs.size() > 0) {
-						SouthRecord southRefRecord = new SouthRecord(B, dataLine3, lineB);
+						SouthSensorRecord southRefRecord = new SouthSensorRecord(B, dataLine3, lineB);
 						Double refSouthSpeed = southRefRecord.getSpeed();
 						String prevOrphan = orphanAs.getFirst();
 						// Iterate to find closest speed match with corresponding B sensors.
 						for (int i = 1; i < orphanAs.size(); i++) {
 							String orphanA = orphanAs.get(i);
-							SensorRecord prevRecord = new SouthRecord(A, dataLine1, prevOrphan);
-							SensorRecord orphanRecord = new SouthRecord(A, dataLine1, orphanA);
+							SensorRecord prevRecord = new SouthSensorRecord(A, dataLine1, prevOrphan);
+							SensorRecord orphanRecord = new SouthSensorRecord(A, dataLine1, orphanA);
 							if (Math.abs(refSouthSpeed - prevRecord.getSpeed()) > Math.abs(refSouthSpeed - orphanRecord.getSpeed())) {
 								prevOrphan = orphanA;
 							}
@@ -142,8 +141,8 @@ public class CarDataLoader1N2S implements SensorDataLoader{
 						prevOrphan = orphanAs.getFirst();
 						for (int i = 1; i < orphanAs.size(); i++) {
 							String orphanA = orphanAs.get(i);
-							SensorRecord prevRecord = new SouthRecord(A, dataLine2, prevOrphan);
-							SensorRecord orphanRecord = new SouthRecord(A, dataLine2, orphanA);
+							SensorRecord prevRecord = new SouthSensorRecord(A, dataLine2, prevOrphan);
+							SensorRecord orphanRecord = new SouthSensorRecord(A, dataLine2, orphanA);
 							if (Math.abs(refSouthSpeed - prevRecord.getSpeed()) > Math.abs(refSouthSpeed - orphanRecord.getSpeed())) {
 								prevOrphan = orphanA;
 							}
@@ -151,8 +150,8 @@ public class CarDataLoader1N2S implements SensorDataLoader{
 						// Now prevOrphan is the best match of line2
 						String line2OrphanMatch = prevOrphan;
 						// Compare the best match between dataline1 and dataline2.
-						SouthRecord record1 = new SouthRecord(A, dataLine2, line1OrphanMatch);
-						SouthRecord record2 = new SouthRecord(A, dataLine2, line2OrphanMatch);
+						SouthSensorRecord record1 = new SouthSensorRecord(A, dataLine2, line1OrphanMatch);
+						SouthSensorRecord record2 = new SouthSensorRecord(A, dataLine2, line2OrphanMatch);
 						// Record the best match as the corresponding A south record wrt sensor B.
 						if (Math.abs(refSouthSpeed - record1.getSpeed()) > Math.abs(refSouthSpeed - record2.getSpeed())) {
 							this.southBoundRecords.add(record2);
@@ -204,13 +203,13 @@ public class CarDataLoader1N2S implements SensorDataLoader{
 	}
 
 	/**
-	 * Flushes our sorted buffers, and pushes these records to be further
-	 * processed.
+	 * Flushes our sorted buffers, and pushes these records for further
+	 * processing.
 	 * 
 	 * @param records
 	 * @param dataProcessor
 	 */
-	private void flushRecordBuffersToProcess(ArrayList<? extends SensorRecord> records, TrafficDataManager dataProcessor) {
+	private void flushRecordBuffersToProcess(ArrayList<? extends SensorRecord> records, DataClassifier dataProcessor) {
 		for (SensorRecord carRecord : records) {
 			dataProcessor.groupIntoUnitProcessors(carRecord);
 		}

@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import com.sample.dataloader.SensorRecord.Direction;
 
 /**
- * DataAggregator,which contains coarse data, in a ready to be calculated form.
+ * DataAggregator,which contains coarse data, in a ready to be further calculated form.
  * And contains methods to calculate and return various parameters like average speed, total counts etc.
  * @author Milind.
  *
