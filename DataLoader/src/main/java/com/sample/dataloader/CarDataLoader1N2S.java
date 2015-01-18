@@ -1,52 +1,55 @@
 package com.sample.dataloader;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import static com.sample.dataloader.BaseSensorRecord.Sensor.*;
+import java.util.List;
 
-public class DataLoader {
+import com.sample.dataloader.SensorRecord.Direction;
+import com.sample.dataprocessor.DataAggregator;
 
-	public static final int[] DEFAULT_SPEED_MATRIX_SCALE_MPS = { 0, 5, 10, 15, 20, 25, 30, 35, 40 };
-	private static final Charset FILE_CHARSET = StandardCharsets.UTF_8;
-	private static final Integer DEFAULT_INTERVAL = 5 * 60000;
+import static com.sample.dataloader.SensorRecord.Sensor.*;
+/**
+ * Implementation of a solution to measure data from 1 north and two south way sensors.
+ * Loads and sorts the data into a more coarse form. 
+ * @author Milind
+ *
+ */
+public class CarDataLoader1N2S implements SensorDataLoader{
+	//This loader is designed for 1 north and two south way sensors.
 	private static final Integer NUM_NORTH_SENSORS = 1;
 	private static final Integer NUM_SOUTH_SENSORS = 2;
 	private LinkedList<String> inputBuffer = new LinkedList<String>();
 	private ArrayList<NorthRecord> northBoundRecords = new ArrayList<NorthRecord>();
 	private ArrayList<SouthRecord> southBoundRecords = new ArrayList<SouthRecord>();
-	private TrafficDataManager northDataProcessor, southDataProcessor;
+	private TrafficDataManager northTrafficManager, southTrafficManager;
 	private DataAggregator northDataAggr, southDataAggr;
 
-	public DataLoader() {
-		this(DEFAULT_INTERVAL, DEFAULT_SPEED_MATRIX_SCALE_MPS);
+	/**
+	 * Primary constructor.
+	 * @param unitPeriod the period of unit for for collecting and formulating coarse data.
+	 * @param speedDistMatrixMPS distribution reference matrix in meters per second.
+	 */
+	public CarDataLoader1N2S(Long unitPeriod, int[] speedDistMatrixMPS) {
+		this.northDataAggr = new DataAggregator(unitPeriod, NUM_NORTH_SENSORS, speedDistMatrixMPS, Direction.NORTH);
+		this.northTrafficManager = new TrafficDataManager(this.northDataAggr, unitPeriod, speedDistMatrixMPS);
+		this.southDataAggr = new DataAggregator(unitPeriod, NUM_SOUTH_SENSORS, speedDistMatrixMPS, Direction.SOUTH);
+		this.southTrafficManager = new TrafficDataManager(this.southDataAggr, unitPeriod, speedDistMatrixMPS);
 	}
-
-	public DataLoader(Integer interval, int[] speedDistMatrixMPS) {
-		this.northDataAggr = new DataAggregator(interval, NUM_NORTH_SENSORS);
-		this.northDataProcessor = new TrafficDataManager(this.northDataAggr, interval, speedDistMatrixMPS);
-		this.southDataAggr = new DataAggregator(interval, NUM_SOUTH_SENSORS);
-		this.southDataProcessor = new TrafficDataManager(this.southDataAggr, interval, speedDistMatrixMPS);
-	}
-
-	public static void main(String[] args) throws FileNotFoundException, IOException {
-		if (args.length <= 0 || args[0] == null) {
-			throw new RuntimeException("Please supply the data file as arguments say ./data.txt ");
-		}
-		DataLoader dl = new DataLoader();
-		dl.loadAndSortRecords(new FileInputStream(args[0]), FILE_CHARSET);
-		new CSVBuilder(dl.northDataAggr).printResults(DEFAULT_INTERVAL);
-		new CSVBuilder(dl.northDataAggr).printResults(DEFAULT_INTERVAL);
-	}
-
-	public void loadAndSortRecords(InputStream inputStream, Charset charSet) throws IOException {
+	
+	/**
+	 * Loads and sort the data into appropriate sensors. 
+	 * @param inputStream input data stream.
+	 * @param charSet charset of the input data.
+	 * @return DataAggregator,which contains coarse data, in a ready to be calculated form.
+	 * @throws IOException
+	 */
+	@Override
+	public List<DataAggregator> loadRecords(InputStream inputStream, Charset charSet) throws IOException {
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charSet))) {
 			LinkedList<String> orphanAs = new LinkedList<String>();
 			LinkedList<String> unprocessedAs = new LinkedList<String>();
@@ -97,8 +100,8 @@ public class DataLoader {
 						// Iterate to find closest speed match with corresponding B sensors.
 						while (orphanAs.size() > 0) {
 							orphanA = orphanAs.removeLast();
-							BaseSensorRecord orphanRecord = new SouthRecord(A, dataLine1, orphanA);
-							BaseSensorRecord trialRecord = new SouthRecord(A, dataLine1, trialLine);
+							SensorRecord orphanRecord = new SouthRecord(A, dataLine1, orphanA);
+							SensorRecord trialRecord = new SouthRecord(A, dataLine1, trialLine);
 							if (Math.abs(refSouthSpeed - trialRecord.getSpeed()) > Math.abs(refSouthSpeed - orphanRecord.getSpeed())) {
 								unprocessedAs.add(trialLine);
 								trialLine = orphanA;
@@ -126,8 +129,8 @@ public class DataLoader {
 						// Iterate to find closest speed match with corresponding B sensors.
 						for (int i = 1; i < orphanAs.size(); i++) {
 							String orphanA = orphanAs.get(i);
-							BaseSensorRecord prevRecord = new SouthRecord(A, dataLine1, prevOrphan);
-							BaseSensorRecord orphanRecord = new SouthRecord(A, dataLine1, orphanA);
+							SensorRecord prevRecord = new SouthRecord(A, dataLine1, prevOrphan);
+							SensorRecord orphanRecord = new SouthRecord(A, dataLine1, orphanA);
 							if (Math.abs(refSouthSpeed - prevRecord.getSpeed()) > Math.abs(refSouthSpeed - orphanRecord.getSpeed())) {
 								prevOrphan = orphanA;
 							}
@@ -139,8 +142,8 @@ public class DataLoader {
 						prevOrphan = orphanAs.getFirst();
 						for (int i = 1; i < orphanAs.size(); i++) {
 							String orphanA = orphanAs.get(i);
-							BaseSensorRecord prevRecord = new SouthRecord(A, dataLine2, prevOrphan);
-							BaseSensorRecord orphanRecord = new SouthRecord(A, dataLine2, orphanA);
+							SensorRecord prevRecord = new SouthRecord(A, dataLine2, prevOrphan);
+							SensorRecord orphanRecord = new SouthRecord(A, dataLine2, orphanA);
 							if (Math.abs(refSouthSpeed - prevRecord.getSpeed()) > Math.abs(refSouthSpeed - orphanRecord.getSpeed())) {
 								prevOrphan = orphanA;
 							}
@@ -165,11 +168,19 @@ public class DataLoader {
 						throw new RuntimeException("Unexpected sequence of sensor records d1:d2:d3 = " + dataLine1 + ":" + dataLine2 + ":" + dataLine3);
 					}
 				}
-				// Time to flush our sorted buffers to process each record further.
-				this.flushRecordBuffersToProcess(this.northBoundRecords, this.northDataProcessor);
-				this.flushRecordBuffersToProcess(this.southBoundRecords, this.southDataProcessor);
+				// Regularly flush out sorted buffers to process each record further.
+				this.flushRecordBuffersToProcess(this.northBoundRecords, this.northTrafficManager);
+				this.flushRecordBuffersToProcess(this.southBoundRecords, this.southTrafficManager);
 			}
 		}
+		//Flush it out finally.
+		this.flushRecordBuffersToProcess(this.northBoundRecords, this.northTrafficManager);
+		this.flushRecordBuffersToProcess(this.southBoundRecords, this.southTrafficManager);
+		
+		List<DataAggregator> dataAggregators = new ArrayList<DataAggregator>();
+		dataAggregators.add(this.northDataAggr);
+		dataAggregators.add(this.southDataAggr);
+		return dataAggregators;
 	}
 
 	/**
@@ -199,9 +210,9 @@ public class DataLoader {
 	 * @param records
 	 * @param dataProcessor
 	 */
-	private void flushRecordBuffersToProcess(ArrayList<? extends BaseSensorRecord> records, TrafficDataManager dataProcessor) {
-		for (BaseSensorRecord hotelRecord : records) {
-			dataProcessor.groupIntoUnitProcessors(hotelRecord);
+	private void flushRecordBuffersToProcess(ArrayList<? extends SensorRecord> records, TrafficDataManager dataProcessor) {
+		for (SensorRecord carRecord : records) {
+			dataProcessor.groupIntoUnitProcessors(carRecord);
 		}
 		records.clear();
 	}

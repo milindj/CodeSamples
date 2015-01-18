@@ -1,13 +1,13 @@
 package com.sample.dataloader;
 
-public class NorthRecord extends BaseSensorRecord {
+public class NorthRecord extends SensorRecord {
 
-	public NorthRecord(BaseSensorRecord.Sensor sensor, Integer frontInterval, Integer backInterval) {
+	public NorthRecord(SensorRecord.Sensor sensor, Long frontInterval, Long backInterval) {
 		super(sensor, frontInterval, backInterval);
 	}
 	
-	public NorthRecord(BaseSensorRecord.Sensor sensor, String dataLine1, String dataLine2) {
-		super(sensor,new Integer(dataLine1.substring(1)), new Integer(dataLine2.substring(1)));
+	public NorthRecord(SensorRecord.Sensor sensor, String dataLine1, String dataLine2) {
+		super(sensor,new Long(dataLine1.substring(1)), new Long(dataLine2.substring(1)));
 	}
 
 	@Override

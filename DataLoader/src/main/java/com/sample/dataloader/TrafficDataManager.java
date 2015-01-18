@@ -1,20 +1,24 @@
 package com.sample.dataloader;
 
+import com.sample.dataprocessor.DataAggregator;
+import com.sample.dataprocessor.UnitTimePeriodProcessor;
+
 public class TrafficDataManager {
 	private DataAggregator result;
 	private UnitTimePeriodProcessor currentUnitRecord;
-	private final Integer periodInterval;
+	private final Long periodInterval;
 	private final int [] speedDistMatrix;
 
-	public TrafficDataManager(DataAggregator result, final Integer periodInterval, int[] speedDistMatrix) {
+	public TrafficDataManager(DataAggregator result, final Long periodInterval, int[] speedDistMatrix) {
 		this.result = result;
 		this.periodInterval = periodInterval;
 		this.speedDistMatrix = speedDistMatrix;
 	}
 
-	public void groupIntoUnitProcessors(BaseSensorRecord sensorRecord) {		
+	public void groupIntoUnitProcessors(SensorRecord sensorRecord) {		
 		if (currentUnitRecord == null) {
 			this.currentUnitRecord = new UnitTimePeriodProcessor(sensorRecord.getFrontWheelStamp(), this.periodInterval,this.speedDistMatrix);
+			this.result.fitPeriodProcIntoTimeSlot(currentUnitRecord, false);
 		}
 		if (sensorRecord.getFrontWheelStamp() > this.currentUnitRecord.getIntervalEndStamp()) {
 			this.result.fitPeriodProcIntoTimeSlot(currentUnitRecord, false);
