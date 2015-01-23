@@ -51,7 +51,7 @@
 									<exclude>org.apache.maven:lib:tests</exclude>
 								</excludes>
 							</artifactSet>
-                      		<finalName>ATMSim</finalName>
+                      		<finalName>GridCarSim</finalName>
 						</configuration>
 					</execution>
 				</executions>
