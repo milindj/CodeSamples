@@ -1,5 +1,12 @@
 package com.sample.gridcarsim.components;
 
+/**
+ * A simple POJO class representing an object position in x,y form on a given 2D
+ * grid.
+ * 
+ * @author Milind
+ *
+ */
 public class Position {
 	Integer x, y;
 
@@ -7,7 +14,7 @@ public class Position {
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	/**
 	 * @return the x
 	 */
