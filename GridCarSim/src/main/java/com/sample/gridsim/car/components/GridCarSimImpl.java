@@ -107,4 +107,11 @@ public class GridCarSimImpl implements GridSimulator{
 		return car;
 	}
 
+	/**
+	 * Method to testing purpose only
+	 */
+	public static void clearStateForTesting() {
+	    carSimInstance = null;
+	}
+
 }

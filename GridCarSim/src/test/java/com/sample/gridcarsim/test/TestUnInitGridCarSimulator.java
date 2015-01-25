@@ -17,6 +17,7 @@ public class TestUnInitGridCarSimulator {
 
 	@Before
 	public void setUp() throws Exception {
+		GridCarSimImpl.clearStateForTesting();
 		this.gridCarSimulator = GridCarSimImpl.getInstance();
 	}
 
