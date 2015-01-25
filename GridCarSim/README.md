@@ -18,14 +18,14 @@ Inside the target directory execute the following
 You would now see a console, 'GRID>'; execute commands to drive the car in the simulation.
 
 ### Commands and descriptions.
-|Commands 			  | Description|
-|--------------   | :------------------------|
-|?list 				    |Get the list of all commands.|
-|?help cmd 			  |Help on the entered cmd/command.|
-|help 				    |Help menu |
-|exit 				    |Exit the simulator|
+|Commands 			 | Description|
+|-----------------   | :------------------------|
+|?list 				 |Get the list of all commands.|
+|?help cmd 			 |Help on the entered cmd/command.|
+|help 				 |Help menu |
+|exit 				 |Exit the simulator|
 |INIT x y direction  |Initialize the car position.| 
-|FORWARD 			    |Move the car forward by one unit| 
-|TURN_LEFT 			  | Turn left| 
-|TURN_RIGHT 		  |Turn right |
-|GPS_REPORT 		  | Print position and direction| 
+|FORWARD 			 |Move the car forward by one unit| 
+|TURN_LEFT 			 | Turn left| 
+|TURN_RIGHT 		 |Turn right |
+|GPS_REPORT 		 | Print position and direction| 
