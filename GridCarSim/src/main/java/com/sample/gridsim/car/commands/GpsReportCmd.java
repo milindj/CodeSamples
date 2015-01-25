@@ -1,8 +1,8 @@
-package com.sample.gridcarsim.commands;
+package com.sample.gridsim.car.commands;
 
-import com.sample.gridcarsim.components.Car;
-import com.sample.gridcarsim.components.Position;
-import com.sample.gridcarsim.exceptions.CarSimException;
+import com.sample.gridsim.Position;
+import com.sample.gridsim.car.components.Car;
+import com.sample.gridsim.exceptions.GridSimException;
 
 /**
  * Command to generate and store the GPS report.
@@ -24,7 +24,7 @@ public class GpsReportCmd extends BaseCommand {
 	/**
 	 * Implementation to generate and store the GPS report.
 	 */
-	public void execute() throws CarSimException {
+	public void execute() throws GridSimException {
 		Position carPosition = this.getCar().getPosition();
 		String gpsReport = "Output: " + carPosition.getX() + ", " 
 							+ carPosition.getY() + ", " + this.getCar().getDirection();

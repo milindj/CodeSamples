@@ -1,7 +1,7 @@
-package com.sample.gridcarsim.components;
+package com.sample.gridsim;
 
-import com.sample.gridcarsim.commands.Command;
-import com.sample.gridcarsim.exceptions.CarSimException;
+import com.sample.gridsim.car.commands.Command;
+import com.sample.gridsim.exceptions.GridSimException;
 
 /**
  * The class representing the 2D Grid, on which the car operates.
@@ -30,12 +30,12 @@ public class Grid {
 	}
 
 	/**
-	 * Executes various commands, typically for the car's movement in the grid.
+	 * Executes various commands, typically for the car or an object's movement in the grid.
 	 * 
 	 * @param command
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	public void execute(Command command) throws CarSimException {
+	public void execute(Command command) throws GridSimException {
 		command.execute();
 	}
 

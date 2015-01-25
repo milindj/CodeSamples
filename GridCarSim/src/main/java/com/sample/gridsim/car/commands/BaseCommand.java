@@ -1,7 +1,7 @@
-package com.sample.gridcarsim.commands;
+package com.sample.gridsim.car.commands;
 
-import com.sample.gridcarsim.components.Car;
-import com.sample.gridcarsim.exceptions.CarPositionNotInitialised;
+import com.sample.gridsim.car.components.Car;
+import com.sample.gridsim.exceptions.PositionNotInitialised;
 
 /**
  * An abstract class to define common behavior of all our simulator commands.
@@ -25,9 +25,9 @@ public abstract class BaseCommand implements Command {
 	 * Gets the car instance after validating its fit enough to execute commands on it.
 	 * 
 	 * @return
-	 * @throws CarPositionNotInitialised
+	 * @throws PositionNotInitialised
 	 */
-	public Car getCar() throws CarPositionNotInitialised {
+	public Car getCar() throws PositionNotInitialised {
 		this.validateCar(this.car);
 		return car;
 	}
@@ -36,11 +36,11 @@ public abstract class BaseCommand implements Command {
 	 * Validate that the car is initialized properly
 	 * 
 	 * @param car
-	 * @throws CarPositionNotInitialised
+	 * @throws PositionNotInitialised
 	 */
-	protected void validateCar(Car car) throws CarPositionNotInitialised {
+	protected void validateCar(Car car) throws PositionNotInitialised {
 		if (car.getPosition() == null || car.getDirectionDegrees() == null) {
-			throw new CarPositionNotInitialised();
+			throw new PositionNotInitialised();
 		}
 	}
 }

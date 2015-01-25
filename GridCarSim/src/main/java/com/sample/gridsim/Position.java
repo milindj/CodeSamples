@@ -1,4 +1,4 @@
-package com.sample.gridcarsim.components;
+package com.sample.gridsim;
 
 /**
  * A simple POJO class representing an object position in x,y form on a given 2D

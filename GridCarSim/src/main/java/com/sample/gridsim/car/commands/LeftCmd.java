@@ -1,7 +1,7 @@
-package com.sample.gridcarsim.commands;
+package com.sample.gridsim.car.commands;
 
-import com.sample.gridcarsim.components.Car;
-import com.sample.gridcarsim.exceptions.CarSimException;
+import com.sample.gridsim.car.components.Car;
+import com.sample.gridsim.exceptions.GridSimException;
 
 /**
  * Command to turn the car left.
@@ -25,7 +25,7 @@ public class LeftCmd extends BaseCommand {
 	 * 
 	 * @see com.sample.gridcarsim.Command#execute()
 	 */
-	public void execute() throws CarSimException {
+	public void execute() throws GridSimException {
 		this.getCar().changeDirectionDegrees(90);
 	}
 

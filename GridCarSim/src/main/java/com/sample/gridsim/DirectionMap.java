@@ -1,4 +1,4 @@
-package com.sample.gridcarsim.components;
+package com.sample.gridsim;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,8 +13,8 @@ import java.util.Map;
 public class DirectionMap {
 
 	/**
-	 * A reverse look up map, which fetches a predefined cardinal direction wrt
-	 * an angular degree.
+	 * A reverse look up map, which fetches a predefined cardinal direction
+	 * {@link Direction} wrt an angular degree.
 	 */
 	private static Map<Integer, Direction> directionDegreeMap = new HashMap<>();
 

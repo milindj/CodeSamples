@@ -3,9 +3,9 @@ package com.sample.gridcarsim.test;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sample.gridcarsim.GridCarSimulator;
-import com.sample.gridcarsim.exceptions.CarPositionNotInitialised;
-import com.sample.gridcarsim.exceptions.CarSimException;
+import com.sample.gridsim.car.components.GridCarSimImpl;
+import com.sample.gridsim.exceptions.PositionNotInitialised;
+import com.sample.gridsim.exceptions.GridSimException;
 
 /**
  * Test to check GridCarSimulator in an uninitialized state.
@@ -13,46 +13,46 @@ import com.sample.gridcarsim.exceptions.CarSimException;
  *
  */
 public class TestUnInitGridCarSimulator {
-	GridCarSimulator gridCarSimulator;
+	GridCarSimImpl gridCarSimulator;
 
 	@Before
 	public void setUp() throws Exception {
-		this.gridCarSimulator = GridCarSimulator.getInstance();
+		this.gridCarSimulator = GridCarSimImpl.getInstance();
 	}
 
 	/**
 	 * Validate to get an uninitialized error when moving forward.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	@Test(expected = CarPositionNotInitialised.class)
-	public void testExecuteUninitialisedFwd() throws CarSimException {
+	@Test(expected = PositionNotInitialised.class)
+	public void testExecuteUninitialisedFwd() throws GridSimException {
 		this.gridCarSimulator.moveForward();
 	}
 	
 	/**
 	 * Validate to get an uninitialized error when turning left.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	@Test(expected = CarPositionNotInitialised.class)
-	public void testExecuteUninitialisedLeft() throws CarSimException {
+	@Test(expected = PositionNotInitialised.class)
+	public void testExecuteUninitialisedLeft() throws GridSimException {
 		this.gridCarSimulator.turnLeft();
 	}
 	
 	/**
 	 * Validate to get an uninitialized error when turning right.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	@Test(expected = CarPositionNotInitialised.class)
-	public void testExecuteUninitialisedRight() throws CarSimException {
+	@Test(expected = PositionNotInitialised.class)
+	public void testExecuteUninitialisedRight() throws GridSimException {
 		this.gridCarSimulator.turnRight();
 	}
 	
 	/**
 	 * Validate to get an uninitialized error when getting gps report.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	@Test(expected = CarPositionNotInitialised.class)
-	public void testExecuteUninitialisedGpsReport() throws CarSimException {
+	@Test(expected = PositionNotInitialised.class)
+	public void testExecuteUninitialisedGpsReport() throws GridSimException {
 		this.gridCarSimulator.gpsReport();
 	}
 

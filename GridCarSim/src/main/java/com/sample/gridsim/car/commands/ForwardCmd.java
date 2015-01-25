@@ -1,8 +1,8 @@
-package com.sample.gridcarsim.commands;
+package com.sample.gridsim.car.commands;
 
-import com.sample.gridcarsim.components.Car;
-import com.sample.gridcarsim.components.Position;
-import com.sample.gridcarsim.exceptions.CarSimException;
+import com.sample.gridsim.Position;
+import com.sample.gridsim.car.components.Car;
+import com.sample.gridsim.exceptions.GridSimException;
 
 /**
  * Command to move the car forward.
@@ -29,7 +29,7 @@ public class ForwardCmd extends BaseCommand {
 	 * Implementation of the logic to move the car front.
 	 * @see com.sample.gridcarsim.Command#execute()
 	 */
-	public void execute() throws CarSimException {
+	public void execute() throws GridSimException {
 		Position carPosition = this.getCar().getPosition();
 		Integer carDirection = this.getCar().getDirectionDegrees();
 		// x = x + cos(theta);

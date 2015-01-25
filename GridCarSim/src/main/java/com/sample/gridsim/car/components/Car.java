@@ -1,8 +1,11 @@
-package com.sample.gridcarsim.components;
+package com.sample.gridsim.car.components;
 
-import com.sample.gridcarsim.components.DirectionMap.Direction;
-import com.sample.gridcarsim.exceptions.InvalidDirectionException;
-import com.sample.gridcarsim.exceptions.OutOfGridRangeException;
+import com.sample.gridsim.DirectionMap;
+import com.sample.gridsim.Grid;
+import com.sample.gridsim.Position;
+import com.sample.gridsim.DirectionMap.Direction;
+import com.sample.gridsim.exceptions.InvalidDirectionException;
+import com.sample.gridsim.exceptions.OutOfGridRangeException;
 
 /**
  * The car class which has functionalities to turn and move across the given
@@ -39,9 +42,9 @@ public class Car {
 		if (directionDegrees < -360 || directionDegrees > 360) {
 			throw new InvalidDirectionException(directionDegrees + "degrees");
 		}
-		//Calculate direction.
+		// Calculate direction.
 		int directionSum = this.directionDegrees + directionDegrees;
-		//Normalize it to 0 to 360.
+		// Normalize it to 0 to 360.
 		if (directionSum < 0) {
 			directionSum = directionSum + 360;
 		} else if (directionSum >= 360) {
@@ -52,9 +55,8 @@ public class Car {
 
 	/**
 	 * Parses the string into a defined direction and set it into degrees for
-	 * the car. The direction is defined in {@see
-	 * com.sample.gridcarsim.components.DirectionMap} Further it throwsn an
-	 * invalid exception if the direction definition does not exist.
+	 * the car. The direction is defined in {@link DirectionMap} . Further it
+	 * throws an invalid exception if the direction definition does not exist.
 	 * 
 	 * @param strDirection
 	 * @throws InvalidDirectionException

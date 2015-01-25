@@ -5,12 +5,12 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sample.gridcarsim.components.Car;
-import com.sample.gridcarsim.components.DirectionMap.Direction;
-import com.sample.gridcarsim.components.Grid;
-import com.sample.gridcarsim.components.Position;
-import com.sample.gridcarsim.exceptions.InvalidDirectionException;
-import com.sample.gridcarsim.exceptions.OutOfGridRangeException;
+import com.sample.gridsim.Grid;
+import com.sample.gridsim.Position;
+import com.sample.gridsim.DirectionMap.Direction;
+import com.sample.gridsim.car.components.Car;
+import com.sample.gridsim.exceptions.InvalidDirectionException;
+import com.sample.gridsim.exceptions.OutOfGridRangeException;
 
 /**
  * Test cases to test the car functionalities.

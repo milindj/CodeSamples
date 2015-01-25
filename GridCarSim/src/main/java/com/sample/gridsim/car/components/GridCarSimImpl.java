@@ -1,14 +1,14 @@
-package com.sample.gridcarsim;
+package com.sample.gridsim.car.components;
 
-import com.sample.gridcarsim.commands.ForwardCmd;
-import com.sample.gridcarsim.commands.GpsReportCmd;
-import com.sample.gridcarsim.commands.InitCmd;
-import com.sample.gridcarsim.commands.LeftCmd;
-import com.sample.gridcarsim.commands.RightCmd;
-import com.sample.gridcarsim.components.Car;
-import com.sample.gridcarsim.components.Grid;
-import com.sample.gridcarsim.components.Position;
-import com.sample.gridcarsim.exceptions.CarSimException;
+import com.sample.gridsim.Grid;
+import com.sample.gridsim.GridSimulator;
+import com.sample.gridsim.Position;
+import com.sample.gridsim.car.commands.ForwardCmd;
+import com.sample.gridsim.car.commands.GpsReportCmd;
+import com.sample.gridsim.car.commands.InitCmd;
+import com.sample.gridsim.car.commands.LeftCmd;
+import com.sample.gridsim.car.commands.RightCmd;
+import com.sample.gridsim.exceptions.GridSimException;
 
 /**
  * The main grid car simulator class which performs various function to move a
@@ -17,8 +17,8 @@ import com.sample.gridcarsim.exceptions.CarSimException;
  * @author milind
  *
  */
-public class GridCarSimulator {
-	private static GridCarSimulator carSimInstance;
+public class GridCarSimImpl implements GridSimulator{
+	private static GridCarSimImpl carSimInstance;
 	private Grid grid;
 	private Car car;
 
@@ -28,19 +28,19 @@ public class GridCarSimulator {
 	 * 
 	 * @return
 	 */
-	public static GridCarSimulator getInstance() {
+	public static GridCarSimImpl getInstance() {
 		if (carSimInstance == null) {
-			carSimInstance = new GridCarSimulator();
+			carSimInstance = new GridCarSimImpl();
 			return carSimInstance;
 		} else {
-			return GridCarSimulator.carSimInstance;
+			return GridCarSimImpl.carSimInstance;
 		}
 	}
 
 	/**
 	 * Initialized it with a default grid size of (10, 10, -10, -10)
 	 */
-	private GridCarSimulator() {
+	private GridCarSimImpl() {
 		this.grid = new Grid(10, 10, -10, -10);
 		this.car = new Car(grid);
 	}
@@ -48,9 +48,9 @@ public class GridCarSimulator {
 	/**
 	 * Moves the car forward in the grid.
 	 * 
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	public void moveForward() throws CarSimException {
+	public void moveForward() throws GridSimException {
 		ForwardCmd fwdCmd = new ForwardCmd(this.car);
 		this.grid.execute(fwdCmd);
 	}
@@ -58,9 +58,9 @@ public class GridCarSimulator {
 	/**
 	 * Turns the car left.
 	 * 
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	public void turnLeft() throws CarSimException {
+	public void turnLeft() throws GridSimException {
 		LeftCmd leftCmd = new LeftCmd(this.car);
 		this.grid.execute(leftCmd);
 	}
@@ -68,9 +68,9 @@ public class GridCarSimulator {
 	/**
 	 * Turns the car right.
 	 * 
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	public void turnRight() throws CarSimException {
+	public void turnRight() throws GridSimException {
 		RightCmd rightCmd = new RightCmd(this.car);
 		this.grid.execute(rightCmd);
 	}
@@ -80,9 +80,9 @@ public class GridCarSimulator {
 	 * @param x
 	 * @param y
 	 * @param direction
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	public void initPosition(Integer x, Integer y, String direction) throws CarSimException {
+	public void initPosition(Integer x, Integer y, String direction) throws GridSimException {
 		Position position = new Position(x, y);
 		InitCmd initCmd = new InitCmd(this.car, position, direction);
 		this.grid.execute(initCmd);
@@ -91,9 +91,9 @@ public class GridCarSimulator {
 	/**
 	 * Fetches the position and direction of the car on the grid in a string form.
 	 * @return
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	public String gpsReport() throws CarSimException {
+	public String gpsReport() throws GridSimException {
 		GpsReportCmd gpsReportCmd = new GpsReportCmd(this.car);
 		this.grid.execute(gpsReportCmd);
 		return this.car.getGpsReport();

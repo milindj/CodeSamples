@@ -1,6 +1,6 @@
-package com.sample.gridcarsim.commands;
+package com.sample.gridsim.car.commands;
 
-import com.sample.gridcarsim.exceptions.CarSimException;
+import com.sample.gridsim.exceptions.GridSimException;
 
 /**
  * Interface for all the commands in our simulator.
@@ -12,7 +12,7 @@ public interface Command {
 	/**
 	 * Executes this command in the simulator.
 	 * 
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	public void execute() throws CarSimException;
+	public void execute() throws GridSimException;
 }

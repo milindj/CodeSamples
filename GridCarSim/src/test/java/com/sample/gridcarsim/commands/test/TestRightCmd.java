@@ -5,13 +5,13 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sample.gridcarsim.commands.RightCmd;
-import com.sample.gridcarsim.components.Car;
-import com.sample.gridcarsim.components.Grid;
-import com.sample.gridcarsim.components.Position;
-import com.sample.gridcarsim.components.DirectionMap.Direction;
-import com.sample.gridcarsim.exceptions.CarPositionNotInitialised;
-import com.sample.gridcarsim.exceptions.CarSimException;
+import com.sample.gridsim.Grid;
+import com.sample.gridsim.Position;
+import com.sample.gridsim.DirectionMap.Direction;
+import com.sample.gridsim.car.commands.RightCmd;
+import com.sample.gridsim.car.components.Car;
+import com.sample.gridsim.exceptions.PositionNotInitialised;
+import com.sample.gridsim.exceptions.GridSimException;
 /**
  * Test cases for RightCmd class.
  * @author milind
@@ -30,19 +30,19 @@ public class TestRightCmd {
 
 	/**
 	 * Test unitialised car scenario.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	@Test(expected = CarPositionNotInitialised.class)
-	public void testExecuteUninitialisedCar() throws CarSimException {
+	@Test(expected = PositionNotInitialised.class)
+	public void testExecuteUninitialisedCar() throws GridSimException {
 		this.rightCmd.execute();
 	}
 	
 	/**
 	 * Test to change direction from NtoE
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test
-	public void testDirectionIncrementN() throws CarSimException {
+	public void testDirectionIncrementN() throws GridSimException {
 		this.car.setPosition(new Position(1, 1)); 
 		this.car.setDirection("NORTH");
 		this.rightCmd.execute();
@@ -51,10 +51,10 @@ public class TestRightCmd {
 	
 	/**
 	 * Test to change direction from StoW
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test
-	public void testDirectionIncrementS() throws CarSimException {
+	public void testDirectionIncrementS() throws GridSimException {
 		this.car.setPosition(new Position(1, 1)); 
 		this.car.setDirection("SOUTH");
 		this.rightCmd.execute();
@@ -63,10 +63,10 @@ public class TestRightCmd {
 	
 	/**
 	 * Test to change direction from WtoN
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test
-	public void testDirectionIncrementW() throws CarSimException {
+	public void testDirectionIncrementW() throws GridSimException {
 		this.car.setPosition(new Position(1, 1)); 
 		this.car.setDirection("WEST");
 		this.rightCmd.execute();
@@ -75,10 +75,10 @@ public class TestRightCmd {
 	
 	/**
 	 * Test to change direction from EtoS
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test
-	public void testDirectionIncrementE() throws CarSimException {
+	public void testDirectionIncrementE() throws GridSimException {
 		this.car.setPosition(new Position(1, 1)); 
 		this.car.setDirection("EAST");
 		this.rightCmd.execute();

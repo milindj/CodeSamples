@@ -5,12 +5,12 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sample.gridcarsim.commands.GpsReportCmd;
-import com.sample.gridcarsim.components.Car;
-import com.sample.gridcarsim.components.Grid;
-import com.sample.gridcarsim.components.Position;
-import com.sample.gridcarsim.exceptions.CarPositionNotInitialised;
-import com.sample.gridcarsim.exceptions.CarSimException;
+import com.sample.gridsim.Grid;
+import com.sample.gridsim.Position;
+import com.sample.gridsim.car.commands.GpsReportCmd;
+import com.sample.gridsim.car.components.Car;
+import com.sample.gridsim.exceptions.PositionNotInitialised;
+import com.sample.gridsim.exceptions.GridSimException;
 
 /**
  * Test GpsReport Command.
@@ -27,20 +27,20 @@ public class TestGpsReport {
 
 	/**
 	 * Test unitialised car scenario.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	@Test(expected = CarPositionNotInitialised.class)
-	public void testExecuteUninitialisedCar() throws CarSimException {
+	@Test(expected = PositionNotInitialised.class)
+	public void testExecuteUninitialisedCar() throws GridSimException {
 		 GpsReportCmd gpsReportCmd = new GpsReportCmd(this.car);
 		 gpsReportCmd.execute();
 	}
 	
 	/**
 	 *  Test GpsReport command output.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test
-	public void testGpsReport() throws CarSimException {
+	public void testGpsReport() throws GridSimException {
 		this.car.setPosition(new Position(1, 2)); 
 		this.car.setDirection("NORTH"); 
 		GpsReportCmd gpsReportCmd = new GpsReportCmd(this.car);

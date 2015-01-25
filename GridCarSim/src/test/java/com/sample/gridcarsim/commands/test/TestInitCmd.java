@@ -5,14 +5,14 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sample.gridcarsim.commands.InitCmd;
-import com.sample.gridcarsim.components.Car;
-import com.sample.gridcarsim.components.Grid;
-import com.sample.gridcarsim.components.Position;
-import com.sample.gridcarsim.components.DirectionMap.Direction;
-import com.sample.gridcarsim.exceptions.CarSimException;
-import com.sample.gridcarsim.exceptions.InvalidDirectionException;
-import com.sample.gridcarsim.exceptions.OutOfGridRangeException;
+import com.sample.gridsim.Grid;
+import com.sample.gridsim.Position;
+import com.sample.gridsim.DirectionMap.Direction;
+import com.sample.gridsim.car.commands.InitCmd;
+import com.sample.gridsim.car.components.Car;
+import com.sample.gridsim.exceptions.GridSimException;
+import com.sample.gridsim.exceptions.InvalidDirectionException;
+import com.sample.gridsim.exceptions.OutOfGridRangeException;
 
 /**
  * Test cases for the InitCmd class.
@@ -30,10 +30,10 @@ public class TestInitCmd {
 
 	/**
 	 * Test the core functionality of initializing the car with appropriate values. 
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test
-	public void testInitCMD() throws CarSimException {
+	public void testInitCMD() throws GridSimException {
 		InitCmd initCmd = new InitCmd(this.car, new Position(1, 2),"NORTH");
 		initCmd.execute();
 		assertEquals(Direction.NORTH, this.car.getDirection());
@@ -43,20 +43,20 @@ public class TestInitCmd {
 	
 	/**
 	 * Test to check if bad string direction input is handled
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test(expected = InvalidDirectionException.class)
-	public void testInitBadDirection() throws CarSimException {
+	public void testInitBadDirection() throws GridSimException {
 		InitCmd initCmd = new InitCmd(this.car, new Position(1, 2),"BADDIRECTION");
 		initCmd.execute();
 	}
 	
 	/**
 	 * Test to check that car is not initialized outside the grids range.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test(expected = OutOfGridRangeException.class)
-	public void testInitBadPosition() throws CarSimException {
+	public void testInitBadPosition() throws GridSimException {
 		InitCmd initCmd = new InitCmd(this.car, new Position(11, 2),"SOUTH");
 		initCmd.execute();
 	}

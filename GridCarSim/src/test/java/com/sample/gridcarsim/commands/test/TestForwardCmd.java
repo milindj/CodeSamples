@@ -5,13 +5,13 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sample.gridcarsim.commands.ForwardCmd;
-import com.sample.gridcarsim.components.Car;
-import com.sample.gridcarsim.components.Grid;
-import com.sample.gridcarsim.components.Position;
-import com.sample.gridcarsim.exceptions.CarPositionNotInitialised;
-import com.sample.gridcarsim.exceptions.CarSimException;
-import com.sample.gridcarsim.exceptions.OutOfGridRangeException;
+import com.sample.gridsim.Grid;
+import com.sample.gridsim.Position;
+import com.sample.gridsim.car.commands.ForwardCmd;
+import com.sample.gridsim.car.components.Car;
+import com.sample.gridsim.exceptions.PositionNotInitialised;
+import com.sample.gridsim.exceptions.GridSimException;
+import com.sample.gridsim.exceptions.OutOfGridRangeException;
 
 /**
  * Test case to test ForwardCmd.
@@ -31,19 +31,19 @@ public class TestForwardCmd {
 
 	/**
 	 * Test unitialised car scenario.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
-	@Test(expected = CarPositionNotInitialised.class)
-	public void testExecuteUninitialisedCar() throws CarSimException {
+	@Test(expected = PositionNotInitialised.class)
+	public void testExecuteUninitialisedCar() throws GridSimException {
 		this.fwdCmd.execute();
 	}
 	
 	/**
 	 * Test car movement in NORTH direction.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test
-	public void testPositionIncrementN() throws CarSimException {
+	public void testPositionIncrementN() throws GridSimException {
 		this.car.setPosition(new Position(1, 1)); 
 		this.car.setDirection("NORTH");
 		this.fwdCmd.execute();
@@ -52,10 +52,10 @@ public class TestForwardCmd {
 	
 	/**
 	 * Test car movement in WEST direction.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test
-	public void testPositionIncrementW() throws CarSimException {
+	public void testPositionIncrementW() throws GridSimException {
 		this.car.setPosition(new Position(0, 1)); 
 		this.car.setDirection("WEST");
 		this.fwdCmd.execute();
@@ -64,10 +64,10 @@ public class TestForwardCmd {
 	
 	/**
 	 * Test car movement in SOUTH direction.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test
-	public void testPositionIncrementS() throws CarSimException {
+	public void testPositionIncrementS() throws GridSimException {
 		this.car.setPosition(new Position(1, 1)); 
 		this.car.setDirection("SOUTH");
 		this.fwdCmd.execute();
@@ -76,10 +76,10 @@ public class TestForwardCmd {
 	
 	/**
 	 * Test car movement in EAST direction.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test
-	public void testPositionIncrementE() throws CarSimException {
+	public void testPositionIncrementE() throws GridSimException {
 		this.car.setPosition(new Position(0, 1)); 
 		this.car.setDirection("EAST");
 		this.fwdCmd.execute();
@@ -88,10 +88,10 @@ public class TestForwardCmd {
 	
 	/**
 	 * Test when car goes beyond the limits of NORTH end.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test(expected = OutOfGridRangeException.class)
-	public void testBadPositionN() throws CarSimException {
+	public void testBadPositionN() throws GridSimException {
 		// On the edge of the grid
 		this.car.setPosition(new Position(7, 10)); 
 		this.car.setDirection("NORTH");
@@ -100,10 +100,10 @@ public class TestForwardCmd {
 
 	/**
 	 * Test when car goes beyond the limits of WEST end.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test(expected = OutOfGridRangeException.class)
-	public void testBadPositionW() throws CarSimException {
+	public void testBadPositionW() throws GridSimException {
 		// On the edge of the grid
 		this.car.setPosition(new Position(-10, 8)); 
 		this.car.setDirection("WEST");
@@ -112,10 +112,10 @@ public class TestForwardCmd {
 	
 	/**
 	 * Test when car goes beyond the limits of SOUTH end.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test(expected = OutOfGridRangeException.class)
-	public void testBadPositionS() throws CarSimException {
+	public void testBadPositionS() throws GridSimException {
 		// On the edge of the grid
 		this.car.setPosition(new Position(7, -10)); 
 		this.car.setDirection("SOUTH");
@@ -124,10 +124,10 @@ public class TestForwardCmd {
 
 	/**
 	 * Test when car goes beyond the limits of EAST end.
-	 * @throws CarSimException
+	 * @throws GridSimException
 	 */
 	@Test(expected = OutOfGridRangeException.class)
-	public void testBadPositionE() throws CarSimException {
+	public void testBadPositionE() throws GridSimException {
 		// On the edge of the grid
 		this.car.setPosition(new Position(10, 8)); 
 		this.car.setDirection("EAST");

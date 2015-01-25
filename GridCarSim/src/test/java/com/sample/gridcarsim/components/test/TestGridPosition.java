@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sample.gridcarsim.components.Grid;
-import com.sample.gridcarsim.components.Position;
+import com.sample.gridsim.Grid;
+import com.sample.gridsim.Position;
 
 /**
  * Test the grid we would run are simulated car on.
