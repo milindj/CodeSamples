@@ -1,4 +1,4 @@
-package com.test.processor;
+package com.pseudo.data.processor;
 
 import java.util.Date;
 

@@ -1,13 +1,13 @@
-package com.test.processor;
+package com.pseudo.data.processor;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.test.processor.Observation;
-import com.test.processor.UnitPeriodRecord;
-import com.test.processor.Observation.GeoLocation;
-import com.test.processor.PersistenceStore;
+import com.pseudo.data.processor.Observation;
+import com.pseudo.data.processor.PersistenceStore;
+import com.pseudo.data.processor.UnitPeriodRecord;
+import com.pseudo.data.processor.Observation.GeoLocation;
 
 import ch.hsr.geohash.GeoHash;
 

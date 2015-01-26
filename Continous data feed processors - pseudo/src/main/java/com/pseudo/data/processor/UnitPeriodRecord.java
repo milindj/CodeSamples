@@ -1,9 +1,9 @@
-package com.test.processor;
+package com.pseudo.data.processor;
 
 import java.util.Date;
 import java.util.Set;
 
-import com.test.processor.GeoArea;
+import com.pseudo.data.processor.GeoArea;
 
 /**
  * Unit persistent record object. May represent a row in a db table.

@@ -1,4 +1,4 @@
-package com.test.processor;
+package com.pseudo.data.processor;
 
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -6,8 +6,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.test.processor.Observation;
-import com.test.processor.ProcessFeed;
+import com.pseudo.data.processor.Observation;
+import com.pseudo.data.processor.ProcessFeed;
 
 /**
  * Receives input from a livefeed(Observations) into a Queue, 

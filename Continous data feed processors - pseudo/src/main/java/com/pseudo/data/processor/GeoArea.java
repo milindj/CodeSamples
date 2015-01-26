@@ -1,4 +1,4 @@
-package com.test.processor;
+package com.pseudo.data.processor;
 
 /**
  * A class defining the space dimension to contain the unit-records.

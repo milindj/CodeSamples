@@ -1,10 +1,10 @@
-package com.test.processor;
+package com.pseudo.data.processor;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.test.processor.UnitPeriodRecord;
+import com.pseudo.data.processor.UnitPeriodRecord;
 
 /**
  * Dummy persistent store. 
