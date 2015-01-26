@@ -13,7 +13,8 @@ Date observationTime;
 GeoLocation location; 
 String observeddUnits;// SI description of the recorded units (e.g. m/s) 
 
-} ``` 
+} 
 
+``` 
 
 Assume we have air temperature, wind speed and soil moisture readings coming in from multiple locations, and we want to dimensionalise readings to enable BI insight about growing conditionsFeel free to use pseudo-frameworks that you are familiar with, and database/persistence frameworks as stubs/assumptions
